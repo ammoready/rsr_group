@@ -6,4 +6,5 @@ require 'rsr_group/base'
 require 'rsr_group/user'
 
 module RsrGroup
+  class NotAuthenticated < StandardError; end
 end

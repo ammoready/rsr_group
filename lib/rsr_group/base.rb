@@ -23,5 +23,15 @@ module RsrGroup
       end
     end
 
+    def connect(options = {})
+      requires!(options, :username, :password)
+
+      Net::FTP.open(FTP_HOST, options[:username], options[:password]) do |ftp|
+        yield ftp
+      end
+    rescue Net::FTPPermError
+      raise RsrGroup::NotAuthenticated
+    end
+
   end
 end

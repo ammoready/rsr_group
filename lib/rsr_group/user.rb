@@ -7,12 +7,9 @@ module RsrGroup
     end
 
     def authenticated?
-      Net::FTP.open(FTP_HOST, @options[:username], @options[:password]) do |ftp|
-        ftp.status
-      end
-
+      connect(@options) { |ftp| ftp.status }
       true
-    rescue Net::FTPPermError
+    rescue RsrGroup::NotAuthenticated
       false
     end
 
