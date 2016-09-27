@@ -1,5 +1,7 @@
 require 'rsr_group/version'
 
+require 'csv'
+require 'date'
 require 'net/ftp'
 
 require 'rsr_group/base'
