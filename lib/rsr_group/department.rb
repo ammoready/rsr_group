@@ -1,6 +1,8 @@
 module RsrGroup
   class Department
 
+    attr_reader :id
+
     NAMES = {
       '01' => 'Handguns',
       '02' => 'Used Handguns',
