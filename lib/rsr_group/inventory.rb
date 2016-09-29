@@ -25,21 +25,21 @@ module RsrGroup
         # Use a zero-byte char as `quote_char` since the data has no quote character.
         CSV.parse(lines, col_sep: ';', quote_char: "\x00") do |row|
           items << {
-            stock_number: row[0],
-            upc: row[1],
-            description: row[2],
+            stock_number: sanitize(row[0]),
+            upc: sanitize(row[1]),
+            description: sanitize(row[2]),
             department: row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]),
-            manufacturer_id: row[4],
-            retail_price: row[5],
-            regular_price: row[6],
-            weight: row[7],
-            quantity: row[8],
-            model: row[9],
-            manufacturer_name: row[10],
-            manufacturer_part_number: row[11],
-            allocated_closeout_deleted: row[12],
-            description_full: row[13],
-            image_name: row[14],
+            manufacturer_id: sanitize(row[4]),
+            retail_price: sanitize(row[5]),
+            regular_price: sanitize(row[6]),
+            weight: sanitize(row[7]),
+            quantity: sanitize(row[8]),
+            model: sanitize(row[9]),
+            manufacturer_name: sanitize(row[10]),
+            manufacturer_part_number: sanitize(row[11]),
+            allocated_closeout_deleted: sanitize(row[12]),
+            description_full: sanitize(row[13]),
+            image_name: sanitize(row[14]),
             restricted_states: {
               AK: row[15] == 'Y',
               AL: row[16] == 'Y',
@@ -97,16 +97,23 @@ module RsrGroup
             adult_signature_required: row[69] == 'Y',
             blocked_from_drop_ship: row[70] == 'Y',
             date_entered: row[71].nil? ? row[71] : Date.strptime(row[71], '%Y%m%d'),
-            retail_map: row[72],
+            retail_map: sanitize(row[72]),
             image_disclaimer: row[73] == 'Y',
-            shipping_length: row[74],
-            shipping_width: row[75],
-            shipping_height: row[76],
+            shipping_length: sanitize(row[74]),
+            shipping_width: sanitize(row[75]),
+            shipping_height: sanitize(row[76]),
           }
         end
       end
 
       items
+    end
+
+    private
+
+    def sanitize(data)
+      return data unless data.is_a?(String)
+      data.strip
     end
 
   end
