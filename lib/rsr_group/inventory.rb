@@ -33,7 +33,7 @@ module RsrGroup
             retail_price: sanitize(row[5]),
             regular_price: sanitize(row[6]),
             weight: sanitize(row[7]),
-            quantity: sanitize(row[8]),
+            quantity: (Integer(sanitize(row[8])) rescue 0),
             model: sanitize(row[9]),
             manufacturer_name: sanitize(row[10]),
             manufacturer_part_number: sanitize(row[11]),
