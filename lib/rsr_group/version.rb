@@ -1,3 +1,3 @@
 module RsrGroup
-  VERSION = "0.1.3.debug"
+  VERSION = "0.1.4"
 end
