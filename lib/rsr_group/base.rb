@@ -29,8 +29,9 @@ module RsrGroup
       Net::FTP.open(FTP_HOST, options[:username], options[:password]) do |ftp|
         yield ftp
       end
-    rescue Net::FTPPermError
-      raise RsrGroup::NotAuthenticated
+    # TODO: Disable this rescue for now, so we can figure out what's happening when used in an actual app.
+    # rescue Net::FTPPermError
+    #   raise RsrGroup::NotAuthenticated
     end
 
   end
