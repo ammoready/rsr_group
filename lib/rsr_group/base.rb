@@ -27,6 +27,7 @@ module RsrGroup
       requires!(options, :username, :password)
 
       Net::FTP.open(FTP_HOST, options[:username], options[:password]) do |ftp|
+        ftp.passive = true
         yield ftp
       end
     # TODO: Disable this rescue for now, so we can figure out what's happening when used in an actual app.
