@@ -7,6 +7,9 @@ require 'net/ftp'
 require 'rsr_group/base'
 require 'rsr_group/department'
 require 'rsr_group/inventory'
+require 'rsr_group/order'
+require 'rsr_group/order_detail'
+require 'rsr_group/order_recipient'
 require 'rsr_group/user'
 
 module RsrGroup

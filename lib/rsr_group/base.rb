@@ -3,6 +3,18 @@ module RsrGroup
 
     FTP_HOST = 'ftp.rsrgroup.com'
 
+    SHIPPING_CARRIERS = %w(UPS USPS)
+
+    SHIPPING_METHODS = {
+      "Grnd" => "Ground",
+      "1Day" => "Next Day Air",
+      "2Day" => "2nd Day Air",
+      "3Day" => "3 Day Select", 
+      "NDam" => "Next Day Early AM",
+      "NDAS" => "Next Day Air Saver",
+      "PRIO" => "Priority"
+    }
+
     protected
 
     # Wrapper to `self.requires!` that can be used as an instance method.
@@ -30,9 +42,6 @@ module RsrGroup
         ftp.passive = true
         yield ftp
       end
-    # TODO: Disable this rescue for now, so we can figure out what's happening when used in an actual app.
-    # rescue Net::FTPPermError
-    #   raise RsrGroup::NotAuthenticated
     end
 
   end
