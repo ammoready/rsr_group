@@ -15,4 +15,24 @@ require 'rsr_group/user'
 module RsrGroup
   class NotAuthenticated < StandardError; end
   class UnknownDepartment < StandardError; end
+
+  class << self
+    attr_accessor :config
+  end
+
+  def self.config
+    @config ||= Configuration.new
+  end
+
+  def self.configure
+    yield(config)
+  end
+
+  class Configuration
+    attr_accessor :vendor_email
+
+    def initialize
+      @vendor_email = nil
+    end
+  end
 end

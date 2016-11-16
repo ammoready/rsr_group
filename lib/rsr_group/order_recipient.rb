@@ -30,7 +30,7 @@ module RsrGroup
         @options[:phone],
         (@options[:email].nil? ? "N" : "Y"),
         @options[:email],
-        nil,
+        RsrGroup.config.vendor_email,
         nil
       ].join(";")
     end
