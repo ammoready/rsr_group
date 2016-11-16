@@ -2,11 +2,13 @@ module RsrGroup
   class OrderRecipient < Base
 
     attr_reader :order_identifier
+    attr_accessor :ffl
     attr_accessor :items
 
     def initialize(options = {})
       requires!(options, :order_identifier, :shipping_name, :address_one, :city, :state, :zip)
 
+      @ffl = options[:ffl]
       @items = options[:items] || []
       @options = options
       @order_identifier = options[:order_identifier]

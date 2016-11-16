@@ -47,6 +47,9 @@ module RsrGroup
       txt = header + "\n"
       recipients.each do |recipient|
         txt += (recipient.to_single_line + "\n")
+        if recipient.ffl
+          txt += (recipient.ffl.to_single_line + "\n")
+        end
         recipient.items.each do |item|
           txt += (item.to_single_line + "\n")
         end

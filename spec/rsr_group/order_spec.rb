@@ -60,6 +60,12 @@ describe RsrGroup::Order do
             zip: "12345",
             phone: "888999000",
             email: "email@example.com",
+            ffl: RsrGroup::OrderFFL.new({
+              order_identifier: "AR1112",
+              licence_number: "aa-bb-01-cc",
+              name: "Balrog",
+              zip: "22122",
+            }),
             items: [
               RsrGroup::OrderDetail.new({
                 order_identifier: "AR1112",
