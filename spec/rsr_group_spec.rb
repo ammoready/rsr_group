@@ -8,10 +8,15 @@ describe RsrGroup do
   describe "#configure" do
     before do
       RsrGroup.configure do |config|
-        config.vendor_email = "admin@example.com"
+        config.ftp_host       = "ftp.host.com"
+        config.submission_dir = File.join("eo", "incoming")
+        config.vendor_email   = "admin@example.com"
       end
     end
 
+    it { expect(RsrGroup.config.ftp_host).to eq("ftp.host.com") }
+    it { expect(RsrGroup::Base.ftp_host).to eq("ftp.host.com") }
+    it { expect(RsrGroup.config.submission_dir).to eq("eo/incoming") }
     it { expect(RsrGroup.config.vendor_email).to eq("admin@example.com") }
   end
 

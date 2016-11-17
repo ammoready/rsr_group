@@ -90,4 +90,8 @@ describe RsrGroup::Order do
     it { expect(order.to_txt).to eq(test_eord_file) }
   end
 
+  describe "#submit!" do
+    pending
+  end
+
 end

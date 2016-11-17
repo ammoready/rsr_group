@@ -30,10 +30,14 @@ module RsrGroup
   end
 
   class Configuration
+    attr_accessor :ftp_host
+    attr_accessor :submission_dir
     attr_accessor :vendor_email
 
     def initialize
-      @vendor_email = nil
+      @ftp_host       ||= "ftp.rsrgroup.com"
+      @submission_dir ||= File.join("eo", "incoming")
+      @vendor_email   ||= nil
     end
   end
 end

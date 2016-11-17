@@ -1,8 +1,6 @@
 module RsrGroup
   class Base
 
-    FTP_HOST = 'ftp.rsrgroup.com'
-
     SHIPPING_CARRIERS = %w(UPS USPS)
 
     SHIPPING_METHODS = {
@@ -17,9 +15,8 @@ module RsrGroup
 
     protected
 
-    # Wrapper to `self.requires!` that can be used as an instance method.
-    def requires!(*args)
-      self.class.requires!(*args)
+    def self.ftp_host
+      RsrGroup.config.ftp_host
     end
 
     def self.requires!(hash, *params)
@@ -35,10 +32,19 @@ module RsrGroup
       end
     end
 
+    def ftp_host
+      self.class.ftp_host
+    end
+
+    # Wrapper to `self.requires!` that can be used as an instance method.
+    def requires!(*args)
+      self.class.requires!(*args)
+    end
+
     def connect(options = {})
       requires!(options, :username, :password)
 
-      Net::FTP.open(FTP_HOST, options[:username], options[:password]) do |ftp|
+      Net::FTP.open(ftp_host, options[:username], options[:password]) do |ftp|
         ftp.passive = true
         yield ftp
       end
