@@ -15,7 +15,6 @@ RSpec.configure do |config|
     RsrGroup.configure do |config|
       config.ftp_host       = "ftp.host.com"
       config.submission_dir = File.join("eo", "incoming")
-      config.vendor_email   = "email@example.com"
     end
   end
 
