@@ -68,6 +68,7 @@ module RsrGroup
           io.close
         end
       end
+      true
     end
 
     private

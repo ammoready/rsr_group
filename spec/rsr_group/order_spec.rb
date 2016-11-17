@@ -91,7 +91,57 @@ describe RsrGroup::Order do
   end
 
   describe "#submit!" do
-    pending
+    let(:order) { 
+      RsrGroup::Order.new({
+        identifier: "AR1112",
+        sequence_number: 1,
+        username: "login",
+        password: "password",
+        recipients: [
+          RsrGroup::OrderRecipient.new({
+            order_identifier: "AR1112",
+            shipping_name: "Bellatrix",
+            address_one: "123 Winchester Ave",
+            city: "Happyville",
+            state: "CA",
+            zip: "12345",
+            phone: "888999000",
+            email: "email@example.com",
+            ffl: RsrGroup::OrderFFL.new({
+              order_identifier: "AR1112",
+              licence_number: "aa-bb-01-cc",
+              name: "Balrog",
+              zip: "22122",
+            }),
+            items: [
+              RsrGroup::OrderDetail.new({
+                order_identifier: "AR1112",
+                rsr_stock_number: "BRS34002",
+                quantity: 1,
+                shipping_carrier: "USPS",
+                shipping_method: "PRIO",
+              }),
+              RsrGroup::OrderDetail.new({
+                order_identifier: "AR1112",
+                rsr_stock_number: "AUT12KT",
+                quantity: 1,
+                shipping_carrier: "USPS",
+                shipping_method: "PRIO",
+              })
+            ]
+          })
+        ]
+      })
+    }
+
+    before do
+      ftp = instance_double("Net::FTP", :passive= => true)
+      allow(ftp).to receive(:chdir).with("eo/incoming") { true }
+      allow(ftp).to receive(:storlines).with("STOR " + order.filename, instance_of(StringIO)) { true }
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
+    end
+
+    it { expect(order.submit!).to be(true) }
   end
 
 end
