@@ -7,6 +7,8 @@ module RsrGroup
     attr_reader :sequence_number
     attr_accessor :recipients
 
+    ORDER_DIR = 'eo'
+
     LINE_TYPES = {
       "00" => "file_header",
       "10" => "order_header",
@@ -56,6 +58,17 @@ module RsrGroup
         txt += recipient.trailer + "\n"
       end
       txt += footer
+    end
+
+    def submit!
+      connect(@credentials) do |ftp|
+        ftp.chdir(ORDER_DIR, "incoming")
+        begin
+          ftp.storlines("STOR " + filename, StringIO.new(to_txt))
+        ensure
+          io.close
+        end
+      end
     end
 
     private
