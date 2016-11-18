@@ -129,6 +129,7 @@ describe RsrGroup::ResponseFile do
         {
           response_type: "Shipping",
           identifier:    "1z112z29",
+          info:          [],
         }
       }
 

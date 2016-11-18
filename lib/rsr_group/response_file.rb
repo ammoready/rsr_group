@@ -85,7 +85,7 @@ module RsrGroup
     end
 
     def parse_eship
-      @json.merge!(info: "")
+      @json.merge!(info: [])
     end
 
   end
