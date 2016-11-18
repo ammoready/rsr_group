@@ -15,7 +15,6 @@ describe RsrGroup do
     end
 
     it { expect(RsrGroup.config.ftp_host).to eq("ftp.host.com") }
-    it { expect(RsrGroup::Base.ftp_host).to eq("ftp.host.com") }
     it { expect(RsrGroup.config.submission_dir).to eq("eo/incoming") }
     it { expect(RsrGroup.config.vendor_email).to eq("admin@example.com") }
   end

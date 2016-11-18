@@ -5,12 +5,15 @@ require 'date'
 require 'net/ftp'
 
 require 'rsr_group/base'
+require 'rsr_group/constants'
+require 'rsr_group/data_row'
 require 'rsr_group/department'
 require 'rsr_group/inventory'
 require 'rsr_group/order'
 require 'rsr_group/order_detail'
 require 'rsr_group/order_ffl'
 require 'rsr_group/order_recipient'
+require 'rsr_group/response_file'
 require 'rsr_group/user'
 
 module RsrGroup
@@ -32,11 +35,13 @@ module RsrGroup
   class Configuration
     attr_accessor :ftp_host
     attr_accessor :submission_dir
+    attr_accessor :response_dir
     attr_accessor :vendor_email
 
     def initialize
       @ftp_host       ||= "ftp.rsrgroup.com"
       @submission_dir ||= File.join("eo", "incoming")
+      @response_dir   ||= File.join("eo", "outgoing")
       @vendor_email   ||= nil
     end
   end
