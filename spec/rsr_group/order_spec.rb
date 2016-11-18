@@ -8,10 +8,6 @@ describe RsrGroup::Order do
     allow(Time).to receive(:now).and_return(now_double)
   end
 
-  it 'has a LINE_TYPES constant' do
-    expect(RsrGroup::Order::LINE_TYPES).not_to be_nil
-  end
-
   let(:basic_order) { 
     RsrGroup::Order.new({
       identifier: "AR1112",

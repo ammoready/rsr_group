@@ -7,15 +7,6 @@ module RsrGroup
     attr_reader :sequence_number
     attr_accessor :recipients
 
-    LINE_TYPES = {
-      "00" => "file_header",
-      "10" => "order_header",
-      "11" => "ffl_dealer",
-      "20" => "order_detail",
-      "90" => "order_trailer",
-      "99" => "file_trailer"
-    }
-
     def initialize(options = {})
       requires!(options, :sequence_number, :username, :password, :identifier)
 
@@ -27,11 +18,11 @@ module RsrGroup
     end
 
     def header
-      ["FILEHEADER", LINE_TYPES.key("file_header"), customer_number, @timestamp, @sequence_number].join(";")
+      ["FILEHEADER", LINE_TYPES.key(:file_header), customer_number, @timestamp, @sequence_number].join(";")
     end
 
     def footer
-      ["FILETRAILER", LINE_TYPES.key("file_trailer"), ("%05d" % recipients.length)].join(";")
+      ["FILETRAILER", LINE_TYPES.key(:file_trailer), ("%05d" % recipients.length)].join(";")
     end
 
     def filename

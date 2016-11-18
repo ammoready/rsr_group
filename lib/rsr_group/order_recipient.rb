@@ -21,7 +21,7 @@ module RsrGroup
     def to_single_line
       [
         order_identifier,
-        Order::LINE_TYPES.key("order_header"),
+        LINE_TYPES.key(:order_header),
         @options[:shipping_name],
         @options[:attn],
         @options[:address_one],
@@ -40,7 +40,7 @@ module RsrGroup
     def trailer
       [
         order_identifier,
-        Order::LINE_TYPES.key("order_trailer"),
+        LINE_TYPES.key(:order_trailer),
         ("%07d" % quantity_sum)
       ].join(";")
     end

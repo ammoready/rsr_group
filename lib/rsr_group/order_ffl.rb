@@ -13,7 +13,7 @@ module RsrGroup
     def to_single_line
       [
         order_identifier,
-        Order::LINE_TYPES.key("ffl_dealer"),
+        LINE_TYPES.key(:ffl_dealer),
         @options[:licence_number],
         @options[:name],
         @options[:zip],

@@ -17,7 +17,7 @@ module RsrGroup
     def to_single_line
       [
         order_identifier,
-        Order::LINE_TYPES.key("order_detail"),
+        LINE_TYPES.key(:order_detail),
         @rsr_stock_number,
         @quantity,
         @shipping_carrier, 
