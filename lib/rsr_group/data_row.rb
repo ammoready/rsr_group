@@ -1,12 +1,13 @@
 module RsrGroup
   class DataRow < Base
   
-    attr_reader :committed, :date_shipped, :handling_fee, :identifier, 
-      :licence_number, :line_type, :name, :ordered, :quantity, :stock_id, 
-      :ship_to_name, :shipped, :shipping_carrier, :shipping_cost, 
-      :shipping_method, :rsr_order_number, :tracking_number, :zip
+    # attr_reader :committed, :date_shipped, :error_code, :handling_fee,
+    #   :identifier, :licence_number, :line_type, :message, :name, 
+    #   :ordered, :quantity, :stock_id, :ship_to_name, :shipped, 
+    #   :shipping_carrier, :shipping_cost, :shipping_method, 
+    #   :rsr_order_number, :tracking_number, :zip
 
-    def initialize(line)
+    def initialize(line, has_errors: false)
       points = line.split(";").map { |point| point.chomp }
 
       @identifier = points[0]
@@ -14,15 +15,21 @@ module RsrGroup
 
       case @line_type
       when :order_header
+        get_errors(points[-1]) if has_errors && points[-1] != "00000"
+        
         @ship_to_name = points[2]
         @zip = points[8]
       when :ffl_dealer # 11
+        get_errors(points[-1]) if has_errors && points[-1] != "00000"
+        
         @licence_number = points[2]
         @name = points[3]
         @zip  = points[4]
       when :order_detail # 20
-        @quantity = points[3].to_i
-        @stock_id = points[2]
+        get_errors(points[-1]) if has_errors && points[-1] != "00000"
+
+        @quantity   = points[3].to_i
+        @stock_id   = points[2]
         @shipping_carrier = points[4]
         @shipping_method  = SHIPPING_METHODS[points[5]]
       when :confirmation_header # 30
@@ -53,6 +60,21 @@ module RsrGroup
       when :order_trailer # 90
         @quantity = points[2].to_i
       end
+    end
+
+    def to_h
+      @to_h ||= Hash[
+        instance_variables.map do |name|
+          [name.to_s.gsub("@", "").to_sym, instance_variable_get(name)]
+        end
+      ]
+    end
+
+    private
+
+    def get_errors(code)
+      @error_code = code
+      @message = ERROR_CODES[code]
     end
 
   end

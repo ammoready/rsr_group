@@ -80,9 +80,23 @@ describe RsrGroup::ResponseFile do
         {
           response_type: "Error",
           identifier:    "1z112z28",
-          errors: [
-            { code: "20005", message: "Invalid shipping method", stock_id: "MPIMAG485GRY" },
-            { code: "20005", message: "Invalid shipping method", stock_id: "CS20NPKZ" }
+          errors:  [
+            { identifier: "1z112z28",
+              line_type: :order_detail,
+              error_code: "20005",
+              message: "Invalid shipping method",
+              quantity: 1,
+              stock_id: "MPIMAG485GRY",
+              shipping_carrier: "USPS",
+              shipping_method: "Priority" },
+            { identifier: "1z112z28",
+              line_type: :order_detail,
+              error_code: "20005",
+              message: "Invalid shipping method",
+              quantity: 1,
+              stock_id: "CS20NPKZ",
+              shipping_carrier: "USPS",
+              shipping_method: "Priority" },
           ]
         }
       }
@@ -101,13 +115,20 @@ describe RsrGroup::ResponseFile do
       let(:filename) { "ECONF-RSRGP-12345-20161117-0002.txt" }
       let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
       let(:expectation) {
-        {
-          response_type:    "Confirmation",
-          identifier:       "1z112z29",
+        { response_type: "Confirmation",
+          identifier: "1z112z29",
           rsr_order_number: "17222",
           details: [
-            { stock_id: "CS20NPKZ", ordered: 1, committed: 1 }, 
-            { stock_id: "MPIMAG485GRY", ordered: 1, committed: 0 },
+            { identifier: "1z112z29",
+              line_type: :confirmation_detail,
+              stock_id: "CS20NPKZ",
+              committed: 1,
+              ordered: 1 },
+            { identifier: "1z112z29",
+              line_type: :confirmation_detail,
+              stock_id: "MPIMAG485GRY",
+              committed: 0,
+              ordered: 1 }
           ]
         }
       }

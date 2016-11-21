@@ -57,30 +57,22 @@ module RsrGroup
 
     def parse_eerr
       errors = @content.lines[1..-2].map do |line|
-        code = line.split(";")[-1].chomp
-        next if code == "00000" # no error
-        {
-          stock_id: line.split(";")[2],
-          code:     code,
-          message:  ERROR_CODES[code],
-        }
-      end
+        DataRow.new(line, has_errors: true).to_h
+      end.compact
 
-      @json.merge!(errors: errors.compact)
+      errors.select! { |e| !e[:error_code].nil? }
+
+      @json.merge!(errors: errors)
     end
 
     def parse_econf
       details = @content.lines[2..-3].map do |line|
-        { 
-          stock_id:  line.split(";")[2],
-          ordered:   line.split(";")[3].to_i,
-          committed: line.split(";")[4].to_i,
-        }
-      end
+        DataRow.new(line).to_h
+      end.compact
 
       @json.merge!({
         rsr_order_number: @content.lines[1].split(";")[2].chomp,
-        details: details.compact
+        details: details
       })
     end
 
