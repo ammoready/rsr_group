@@ -1,8 +1,6 @@
 module RsrGroup
   class ResponseFile < Base
 
-    attr_reader :content
-    attr_reader :credentials
     attr_reader :filename
 
     def initialize(options = {})

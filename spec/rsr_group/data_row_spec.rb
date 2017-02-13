@@ -97,6 +97,10 @@ describe RsrGroup::DataRow do
     context "order_trailer (90)" do
       let(:data_row) { RsrGroup::DataRow.new("grsord003;90;0000001") }
 
+      before do
+        pp data_row.to_h
+      end
+
       it { expect(data_row.identifier).to eq("grsord003") }
       it { expect(data_row.line_type).to eq(:order_trailer) }
       it { expect(data_row.quantity).to eq(1) }

@@ -1,11 +1,11 @@
 module RsrGroup
   class DataRow < Base
   
-    # attr_reader :committed, :date_shipped, :error_code, :handling_fee,
-    #   :identifier, :licence_number, :line_type, :message, :name, 
-    #   :ordered, :quantity, :stock_id, :ship_to_name, :shipped, 
-    #   :shipping_carrier, :shipping_cost, :shipping_method, 
-    #   :rsr_order_number, :tracking_number, :zip
+    attr_reader :committed, :date_shipped, :error_code, :handling_fee,
+      :identifier, :licence_number, :line_type, :message, :name, 
+      :ordered, :quantity, :stock_id, :ship_to_name, :shipped, 
+      :shipping_carrier, :shipping_cost, :shipping_method, 
+      :rsr_order_number, :tracking_number, :zip
 
     def initialize(line, has_errors: false)
       points = line.split(";").map { |point| point.chomp }
