@@ -40,6 +40,8 @@ module RsrGroup
     # @option ffl_options [String] :name           *required*
     # @option ffl_options [String] :zip            *required*
     def add_recipient(shipping_info, ffl_options = {})
+      requires!(shipping_info, :shipping_name, :address_one, :city, :state, :zip)
+
       @recipient = OrderRecipient.new(shipping_info.merge(order_identifier: @identifier))
       @ffl = OrderFFL.new(ffl_options.merge(order_identifier: @identifier)) if ffl_options.any?
     end
@@ -50,6 +52,8 @@ module RsrGroup
     # @option item [String]  :shipping_carrier *required*
     # @option item [String]  :shipping_method  *required*
     def add_item(item)
+      requires!(item, :rsr_stock_number, :quantity, :shipping_carrier, :shipping_method)
+
       @items << OrderDetail.new(item.merge(order_identifier: @identifier))
     end
 
