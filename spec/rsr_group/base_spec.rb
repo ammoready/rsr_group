@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe RsrGroup::Base do
 
-  # TODO
+  describe ".connect" do
+    pending 
+  end
 
 end

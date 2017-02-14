@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe RsrGroup::User do
 
-  describe "#name" do    
+  describe "#name" do
     let(:user) { RsrGroup::User.new(username: "bob", password: "kitty") }
 
     before do

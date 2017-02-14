@@ -1,0 +1,5 @@
+RsrGroup.configure do |config|
+  config.ftp_host       = "ftp.example.com"
+  config.submission_dir = File.join("htdocs", "eo", "incoming")
+  config.vendor_email   = "admin@example.com"
+end

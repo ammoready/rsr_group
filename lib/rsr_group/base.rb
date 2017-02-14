@@ -1,14 +1,16 @@
 module RsrGroup
   class Base
 
-    FTP_HOST = 'ftp.rsrgroup.com'
+    def self.connect(options = {})
+      requires!(options, :username, :password)
+
+      Net::FTP.open(RsrGroup.config.ftp_host, options[:username], options[:password]) do |ftp|
+        ftp.passive = true
+        yield ftp
+      end
+    end
 
     protected
-
-    # Wrapper to `self.requires!` that can be used as an instance method.
-    def requires!(*args)
-      self.class.requires!(*args)
-    end
 
     def self.requires!(hash, *params)
       params.each do |param|
@@ -23,16 +25,16 @@ module RsrGroup
       end
     end
 
-    def connect(options = {})
-      requires!(options, :username, :password)
+    # Wrapper to `self.requires!` that can be used as an instance method.
+    def requires!(*args)
+      self.class.requires!(*args)
+    end
 
-      Net::FTP.open(FTP_HOST, options[:username], options[:password]) do |ftp|
-        ftp.passive = true
+    # Instance methods become class methods through inheritance
+    def connect(options)
+      self.class.connect(options) do |ftp|
         yield ftp
       end
-    # TODO: Disable this rescue for now, so we can figure out what's happening when used in an actual app.
-    # rescue Net::FTPPermError
-    #   raise RsrGroup::NotAuthenticated
     end
 
   end
