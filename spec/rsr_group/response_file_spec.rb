@@ -79,9 +79,9 @@ describe RsrGroup::ResponseFile do
       let(:expectation) {
         {
           response_type: "Error",
-          identifier:    "1z112z28",
+          identifier:    "4000-1000",
           errors:  [
-            { identifier: "1z112z28",
+            { identifier: "4000-1000",
               line_type: :order_detail,
               error_code: "20005",
               message: "Invalid shipping method",
@@ -89,7 +89,7 @@ describe RsrGroup::ResponseFile do
               stock_id: "MPIMAG485GRY",
               shipping_carrier: "USPS",
               shipping_method: "Priority" },
-            { identifier: "1z112z28",
+            { identifier: "4000-1000",
               line_type: :order_detail,
               error_code: "20005",
               message: "Invalid shipping method",
@@ -115,16 +115,16 @@ describe RsrGroup::ResponseFile do
       let(:filename) { "ECONF-RSRGP-12345-20161117-0002.txt" }
       let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
       let(:expectation) {
-        { response_type: "Confirmation",
-          identifier: "1z112z29",
+        { response_type:    "Confirmation",
+          identifier:       "4000-1020",
           rsr_order_number: "17222",
           details: [
-            { identifier: "1z112z29",
+            { identifier: "4000-1020",
               line_type: :confirmation_detail,
               stock_id: "CS20NPKZ",
               committed: 1,
               ordered: 1 },
-            { identifier: "1z112z29",
+            { identifier: "4000-1020",
               line_type: :confirmation_detail,
               stock_id: "MPIMAG485GRY",
               committed: 0,
@@ -148,16 +148,38 @@ describe RsrGroup::ResponseFile do
       let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
       let(:expectation) {
         {
-          response_type: "Shipping",
-          identifier:    "1z112z29",
-          info:          [],
+          response_type:    "Shipping",
+          identifier:       "5000-2000",
+          rsr_order_number: "99999",
+          details: [
+            { identifier: "5000-2000",
+              line_type: :shipping_header,
+              ship_to_name: "Bellatrix",
+              shipping_carrier: "UPS",
+              shipping_method: "Grnd",
+              date_shipped: Time.parse('20161117'),
+              handling_fee: "0",
+              rsr_order_number: "58776",
+              shipping_cost: "800",
+              tracking_number: "1Z7539320314612868"},
+            { identifier: "5000-2000",
+              line_type: :shipping_detail,
+              stock_id: "CS20NPKZ",
+              ordered: 1,
+              shipped: 1 },
+            { identifier: "5000-2000",
+              line_type: :shipping_detail,
+              stock_id: "MPIMAG485GRY",
+              ordered: 1,
+              shipped: 1 }
+          ],
         }
       }
 
       before do
         ftp = instance_double("Net::FTP", :passive= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
-        allow(ftp).to receive(:gettextfile).with(filename, nil) { test_econf_file }
+        allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eship_file }
         allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       end
 

@@ -75,7 +75,14 @@ module RsrGroup
     end
 
     def parse_eship
-      @json.merge!(info: [])
+      details = @content.lines[1..-3].map do |line|
+        DataRow.new(line).to_h
+      end.compact
+
+      @json.merge!({
+        rsr_order_number: @content.lines[0].split(";")[3].chomp,
+        details: details
+      })
     end
 
   end

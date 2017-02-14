@@ -16,18 +16,15 @@ module RsrGroup
       case @line_type
       when :order_header
         get_errors(points[-1]) if has_errors && points[-1] != "00000"
-        
         @ship_to_name = points[2]
         @zip = points[8]
       when :ffl_dealer # 11
         get_errors(points[-1]) if has_errors && points[-1] != "00000"
-        
         @licence_number = points[2]
         @name = points[3]
         @zip  = points[4]
       when :order_detail # 20
         get_errors(points[-1]) if has_errors && points[-1] != "00000"
-
         @quantity   = points[3].to_i
         @stock_id   = points[2]
         @shipping_carrier = points[4]
@@ -51,8 +48,8 @@ module RsrGroup
         @shipping_method  = points[9]
         @tracking_number  = points[3]
       when :shipping_detail # 70
-        @ordered = points[3].to_i
-        @shipped = points[4].to_i
+        @ordered  = points[3].to_i
+        @shipped  = points[4].to_i
         @stock_id = points[2]
       when :shipping_trailer # 80
         @ordered = points[2].to_i
