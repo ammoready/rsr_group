@@ -51,7 +51,7 @@ module RsrGroup
     # @option item [Integer] :quantity         *required*
     # @option item [String]  :shipping_carrier *required*
     # @option item [String]  :shipping_method  *required*
-    def add_item(item)
+    def add_item(item = {})
       requires!(item, :rsr_stock_number, :quantity, :shipping_carrier, :shipping_method)
 
       @items << OrderDetail.new(item.merge(order_identifier: @identifier))
