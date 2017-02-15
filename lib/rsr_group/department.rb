@@ -54,6 +54,14 @@ module RsrGroup
       raise RsrGroup::UnknownDepartment.new("Invalid ID: valid ID range: #{NAMES.keys.first}-#{NAMES.keys.last}") unless NAMES.keys.include?(@id)
     end
 
+    def ammunition?
+      @id == '18'
+    end
+
+    def firearm?
+      ['01', '02', '03', '05', '07'].include?(@id)
+    end
+
     def name
       NAMES[@id]
     end
