@@ -43,7 +43,10 @@ module RsrGroup
       requires!(shipping_info, :shipping_name, :address_one, :city, :state, :zip)
 
       @recipient = OrderRecipient.new(shipping_info.merge(order_identifier: @identifier))
-      @ffl = OrderFFL.new(ffl_options.merge(order_identifier: @identifier)) if ffl_options.any?
+
+      if ffl_options && ffl_options.any?
+        @ffl = OrderFFL.new(ffl_options.merge(order_identifier: @identifier))
+      end
     end
 
     # @param [Hash] item
