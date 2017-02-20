@@ -7,18 +7,18 @@ module RsrGroup
   }
 
   LINE_TYPES = {
-    '00' => 'file_header',
-    '10' => 'order_header',
-    '11' => 'ffl_dealer',
-    '20' => 'order_detail',
-    '30' => 'confirmation_header',
-    '40' => 'confirmation_detail',
-    '50' => 'confirmation_trailer',
-    '60' => 'shipping_header',
-    '70' => 'shipping_detail',
-    '80' => 'shipping_trailer',
-    '90' => 'order_trailer',
-    '99' => 'file_trailer',
+    '00' => :file_header,
+    '10' => :order_header,
+    '11' => :ffl_dealer,
+    '20' => :order_detail,
+    '30' => :confirmation_header,
+    '40' => :confirmation_detail,
+    '50' => :confirmation_trailer,
+    '60' => :shipping_header,
+    '70' => :shipping_detail,
+    '80' => :shipping_trailer,
+    '90' => :order_trailer,
+    '99' => :file_trailer,
   }
 
   SHIPPING_CARRIERS = %w(UPS USPS)

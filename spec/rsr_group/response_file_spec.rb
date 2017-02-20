@@ -82,21 +82,21 @@ describe RsrGroup::ResponseFile do
           identifier:    "4000-1000",
           errors:  [
             { identifier: "4000-1000",
-              line_type: :order_detail,
-              error_code: "20005",
-              message: "Invalid shipping method",
-              quantity: 1,
+              line_type: 'order_detail',
+              quantity: '1',
               stock_id: "MPIMAG485GRY",
               shipping_carrier: "USPS",
-              shipping_method: "Priority" },
-            { identifier: "4000-1000",
-              line_type: :order_detail,
+              shipping_method: "Priority",
               error_code: "20005",
-              message: "Invalid shipping method",
-              quantity: 1,
+              message: "Invalid shipping method" },
+            { identifier: "4000-1000",
+              line_type: 'order_detail',
+              quantity: '1',
               stock_id: "CS20NPKZ",
               shipping_carrier: "USPS",
-              shipping_method: "Priority" },
+              shipping_method: "Priority",
+              error_code: "20005",
+              message: "Invalid shipping method" },
           ]
         }
       }
@@ -120,15 +120,15 @@ describe RsrGroup::ResponseFile do
           rsr_order_number: "17222",
           details: [
             { identifier: "4000-1020",
-              line_type: :confirmation_detail,
-              stock_id: "CS20NPKZ",
-              committed: 1,
-              ordered: 1 },
+              line_type: 'confirmation_detail',
+              committed: '1',
+              ordered: '1',
+              stock_id: "CS20NPKZ" },
             { identifier: "4000-1020",
-              line_type: :confirmation_detail,
-              stock_id: "MPIMAG485GRY",
-              committed: 0,
-              ordered: 1 }
+              line_type: 'confirmation_detail',
+              committed: '0',
+              ordered: '1',
+              stock_id: "MPIMAG485GRY" }
           ]
         }
       }
@@ -153,25 +153,25 @@ describe RsrGroup::ResponseFile do
           rsr_order_number: "99999",
           details: [
             { identifier: "5000-2000",
-              line_type: :shipping_header,
+              line_type: 'shipping_header',
               ship_to_name: "Bellatrix",
               shipping_carrier: "UPS",
               shipping_method: "Grnd",
-              date_shipped: Time.parse('20161117'),
+              date_shipped: '20161117',
               handling_fee: "0",
               rsr_order_number: "58776",
               shipping_cost: "800",
               tracking_number: "1Z7539320314612868"},
             { identifier: "5000-2000",
-              line_type: :shipping_detail,
+              line_type: 'shipping_detail',
               stock_id: "CS20NPKZ",
-              ordered: 1,
-              shipped: 1 },
+              ordered: '1',
+              shipped: '1' },
             { identifier: "5000-2000",
-              line_type: :shipping_detail,
+              line_type: 'shipping_detail',
               stock_id: "MPIMAG485GRY",
-              ordered: 1,
-              shipped: 1 }
+              ordered: '1',
+              shipped: '1' }
           ],
         }
       }

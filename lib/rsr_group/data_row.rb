@@ -39,7 +39,7 @@ module RsrGroup
         @committed = points[3].to_i
         @ordered   = points[2].to_i
       when :shipping_header # 60
-        @date_shipped     = Time.parse(points[5])
+        @date_shipped     = points[5]
         @handling_fee     = points[7].to_i.to_s
         @rsr_order_number = points[4]
         @ship_to_name     = points[2]
@@ -62,7 +62,7 @@ module RsrGroup
     def to_h
       @to_h ||= Hash[
         instance_variables.map do |name|
-          [name.to_s.gsub("@", "").to_sym, instance_variable_get(name)]
+          [name.to_s.gsub("@", "").to_sym, instance_variable_get(name).to_s]
         end
       ]
     end

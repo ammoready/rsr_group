@@ -65,7 +65,7 @@ describe RsrGroup::DataRow do
 
       it { expect(data_row.identifier).to eq("grsord003") }
       it { expect(data_row.line_type).to eq(:shipping_header) }
-      it { expect(data_row.date_shipped).to eq(Time.parse("20120801")) }
+      it { expect(data_row.date_shipped).to eq('20120801') }
       it { expect(data_row.handling_fee).to eq("0") }
       it { expect(data_row.rsr_order_number).to eq("58778") }
       it { expect(data_row.ship_to_name).to eq("Legolas") }
