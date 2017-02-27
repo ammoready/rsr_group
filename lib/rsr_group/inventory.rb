@@ -1,8 +1,10 @@
 module RsrGroup
   class Inventory < Base
 
+    KEYDEALER_DIR = 'keydealer'
     INVENTORY_DIR = 'ftpdownloads'
     INVENTORY_FILENAME = 'rsrinventory-new.txt'
+    KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -18,9 +20,13 @@ module RsrGroup
       items = []
 
       connect(@options) do |ftp|
-        ftp.chdir(INVENTORY_DIR)
-
-        lines = ftp.gettextfile(INVENTORY_FILENAME, nil)
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+          lines = ftp.gettextfile(KEYDEALER_FILENAME, nil)
+        else
+          ftp.chdir(INVENTORY_DIR)
+          lines = ftp.gettextfile(INVENTORY_FILENAME, nil)
+        end
 
         # Use a zero-byte char as `quote_char` since the data has no quote character.
         CSV.parse(lines, col_sep: ';', quote_char: "\x00") do |row|
