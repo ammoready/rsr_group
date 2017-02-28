@@ -14,6 +14,8 @@ module RsrGroup
       @line_type  = LINE_TYPES[points[1]]
 
       case @line_type
+      when :file_header
+        get_errors(points[-1]) if has_errors && points[-1] != "00000"
       when :order_header
         get_errors(points[-1]) if has_errors && points[-1] != "00000"
         @ship_to_name = points[2]

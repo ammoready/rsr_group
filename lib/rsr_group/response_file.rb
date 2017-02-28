@@ -29,7 +29,7 @@ module RsrGroup
       return @content if @content
       connect(@credentials) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        @content = ftp.gettextfile(@filename, nil)
+        @content   = ftp.gettextfile(@filename, nil)
       end
     end
     alias get_content content
@@ -54,7 +54,7 @@ module RsrGroup
     private
 
     def parse_eerr
-      errors = @content.lines[1..-2].map do |line|
+      errors = @content.lines[0..-2].map do |line|
         DataRow.new(line, has_errors: true).to_h
       end.compact
 
