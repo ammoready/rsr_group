@@ -45,6 +45,7 @@ describe RsrGroup::ResponseFile do
       ftp = instance_double("Net::FTP", :passive= => true)
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
+      allow(ftp).to receive(:mtime) { Time.at(1488296977) }
       allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       response_file.content
     end
@@ -105,6 +106,7 @@ describe RsrGroup::ResponseFile do
         ftp = instance_double("Net::FTP", :passive= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
+        allow(ftp).to receive(:mtime) { Time.at(1488296977) }
         allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       end
 
@@ -137,6 +139,7 @@ describe RsrGroup::ResponseFile do
         ftp = instance_double("Net::FTP", :passive= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_econf_file }
+        allow(ftp).to receive(:mtime) { Time.at(1488296977) }
         allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       end
 
@@ -180,6 +183,7 @@ describe RsrGroup::ResponseFile do
         ftp = instance_double("Net::FTP", :passive= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eship_file }
+        allow(ftp).to receive(:mtime) { Time.at(1488296977) }
         allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       end
 
