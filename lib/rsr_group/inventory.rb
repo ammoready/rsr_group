@@ -1,10 +1,11 @@
 module RsrGroup
   class Inventory < Base
 
-    KEYDEALER_DIR = 'keydealer'
-    INVENTORY_DIR = 'ftpdownloads'
-    INVENTORY_FILENAME = 'rsrinventory-new.txt'
-    KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'
+    KEYDEALER_DIR      = 'keydealer'.freeze
+    INVENTORY_DIR      = 'ftpdownloads'.freeze
+    INVENTORY_FILENAME = 'rsrinventory-new.txt'.freeze
+    KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
+    QTY_FILENAME       = 'IM-QTY-CSV.csv'.freeze
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -14,6 +15,11 @@ module RsrGroup
     def self.all(options = {})
       requires!(options, :username, :password)
       new(options).all
+    end
+
+    def self.quantities(options = {})
+      requires!(options, :username, :password)
+      new(options).quantities
     end
 
     def all
@@ -113,6 +119,29 @@ module RsrGroup
       end
 
       items
+    end
+
+    def quantities
+      rows = []
+
+      connect(@options) do |ftp|
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+        else
+          ftp.chdir(INVENTORY_DIR)
+        end
+
+        csv = ftp.gettextfile(QTY_FILENAME, nil)
+
+        CSV.parse(csv) do |row|
+          rows << { 
+            stock_number: row[0],
+            quantity: row[1].to_i,
+          }
+        end
+      end
+
+      rows
     end
 
     private

@@ -1,5 +1,23 @@
 module SampleFiles
 
+  def sample_inventory_txt
+    <<-TXT.chomp
+PRODUCT1;800000123101;PRODUCT1;34;Brand1;100.99;90.00; 2;21;;Brand1;PRODUCT1;;Great product;product1.jpg;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;20161103;29.44;;2.50;1.50;1.50;
+PRODUCT2;800000123702;PRODUCT2;01;Brand2;200.99;190.00;75; 0;Brand2;PRODUCT2;PRODUCT2;;Great product;product2.jpg;;;;;Y;;;;;;;;;;;;;;;Y;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;Y;Y;20161028;.00;;13.25;11.50;3.50; 
+PRODUCT3;800000123103;PRODUCT3;09;Brand3;300.99;290.00; 5;21;Brand3;PRODUCT3;PRODUCT3;;Great product;product3.jpg;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;20161213;67.50;;4.75;2.25;2.25; 
+PRODUCT3;800000123404;PRODUCT4;26;Brand4;400.99;390.00; 9;32;Brand4;PRODUCT4;PRODUCT4;;Great product;product4.jpg;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;20260307;.00;;9.00;6.00;4.50; 
+    TXT
+  end
+
+  def sample_quantity_csv
+    <<-TXT.chomp
+PRODUCT1,0000020
+PRODUCT2,0000010
+PRODUCT3,0000000
+PRODUCT4,0000300
+  TXT
+  end
+
   def sample_eord_file
     <<-TXT
 FILEHEADER;00;99999;20120801;0001
