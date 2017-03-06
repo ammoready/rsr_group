@@ -6,6 +6,7 @@ module RsrGroup
     INVENTORY_FILENAME = 'rsrinventory-new.txt'.freeze
     KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
     QTY_FILENAME       = 'IM-QTY-CSV.csv'.freeze
+    MAP_FILENAME       = 'retail-map.csv'.freeze
 
     def initialize(options = {})
       requires!(options, :username, :password)
@@ -15,6 +16,11 @@ module RsrGroup
     def self.all(options = {})
       requires!(options, :username, :password)
       new(options).all
+    end
+
+    def self.map_prices(options = {})
+      requires!(options, :username, :password)
+      new(options).map_prices
     end
 
     def self.quantities(options = {})
@@ -121,6 +127,31 @@ module RsrGroup
       end
 
       items
+    end
+
+    def map_prices
+      rows = []
+
+      connect(@options) do |ftp|
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+        else
+          ftp.chdir(INVENTORY_DIR)
+        end
+
+        csv = ftp.gettextfile(MAP_FILENAME, nil)
+
+        CSV.parse(csv) do |row|
+          rows << { 
+            stock_number: row[0],
+            map_price: row[1],
+          }
+        end
+
+        ftp.close
+      end
+
+      rows
     end
 
     def quantities
