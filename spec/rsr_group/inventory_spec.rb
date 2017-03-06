@@ -11,6 +11,7 @@ describe RsrGroup::Inventory do
       allow(ftp).to receive(:chdir).with('ftpdownloads') { true }
       allow(ftp).to receive(:gettextfile).with('rsrinventory-new.txt', nil) { sample_inventory_txt }
       allow(Net::FTP).to receive(:open).with('ftp.host.com', 'login', 'password') { |&block| block.call(ftp) }
+      allow(ftp).to receive(:close) { nil }
     end
 
     it { expect(execution.map { |x| x[:stock_number] }).to eq(["PRODUCT1", "PRODUCT2", "PRODUCT3", "PRODUCT3"]) }
@@ -33,6 +34,7 @@ describe RsrGroup::Inventory do
       allow(ftp).to receive(:chdir).with('ftpdownloads') { true }
       allow(ftp).to receive(:gettextfile).with('IM-QTY-CSV.csv', nil) { sample_quantity_csv }
       allow(Net::FTP).to receive(:open).with('ftp.host.com', 'login', 'password') { |&block| block.call(ftp) }
+      allow(ftp).to receive(:close) { nil }
     end
 
     it { expect(execution).to eq(expectation) }

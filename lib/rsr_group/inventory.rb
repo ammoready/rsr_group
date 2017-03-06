@@ -116,6 +116,8 @@ module RsrGroup
             shipping_height: sanitize(row[76]),
           }
         end
+
+        ftp.close
       end
 
       items
@@ -139,6 +141,8 @@ module RsrGroup
             quantity: row[1].to_i,
           }
         end
+
+        ftp.close
       end
 
       rows
