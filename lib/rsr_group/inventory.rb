@@ -139,12 +139,11 @@ module RsrGroup
           ftp.chdir(INVENTORY_DIR)
         end
 
-        csv = ftp.gettextfile(MAP_FILENAME, nil)
-
-        CSV.parse(csv) do |row|
-          rows << { 
-            stock_number: row[0],
-            map_price: row[1],
+        ftp.gettextfile(MAP_FILENAME, nil) do |line|
+          points = line.split(',').map(&:rstrip)
+          rows << {
+            stock_number: points[0],
+            map_price:    points[1],
           }
         end
 
@@ -168,7 +167,7 @@ module RsrGroup
 
         CSV.parse(csv) do |row|
           rows << { 
-            stock_number: row[0],
+            stock_number: row[0].rstrip,
             quantity: row[1].to_i,
           }
         end
