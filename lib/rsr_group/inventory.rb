@@ -45,8 +45,6 @@ module RsrGroup
         else
           ftp.chdir(INVENTORY_DIR)
           lines = ftp.gettextfile(INVENTORY_FILENAME, nil)
-
-          puts lines.length
         end
 
         # Use a zero-byte char as `quote_char` since the data has no quote character.
