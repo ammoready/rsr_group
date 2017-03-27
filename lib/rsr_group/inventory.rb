@@ -138,8 +138,6 @@ module RsrGroup
 
     def process_as_chunks(size)
       connect(@options) do |ftp|
-        ftp.debug_mode = true
-
         chunk         = []
         item_count    = 1
         temp_csv_file = Tempfile.new
