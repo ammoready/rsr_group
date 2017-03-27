@@ -3,6 +3,7 @@ require 'rsr_group/version'
 require 'csv'
 require 'date'
 require 'net/ftp'
+require 'smarter_csv'
 
 require 'rsr_group/base'
 require 'rsr_group/constants'
