@@ -155,10 +155,12 @@ module RsrGroup
         CSV.readlines(temp_csv_file, col_sep: ';', quote_char: "\x00").to_enum.with_index(1).each do |row, current_line|
           chunk << process_row(row)
 
+          # Return chunk if we have reached the end of the file
           if line_count == current_line
             yield(chunk)
           end
 
+          # Return if chuck is full
           if item_count == size
             yield(chunk)
 
