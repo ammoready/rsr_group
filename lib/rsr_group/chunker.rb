@@ -26,7 +26,7 @@ module RsrGroup
       @chunk.count == @size
     end
 
-    def is_completed?
+    def is_complete?
       @total_count == @current_count
     end
 

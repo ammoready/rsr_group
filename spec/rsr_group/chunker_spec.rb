@@ -29,14 +29,14 @@ describe RsrGroup::Chunker do
     @chunker.is_full?.should == true
   end
 
-  it "should know when it's completed" do
+  it "should know when it's complete" do
     @chunker.total_count = 20
 
     20.times do
       @chunker.add(["data"])
     end
 
-    @chunker.is_completed?.should == true
+    @chunker.is_complete?.should == true
   end
 
 end
