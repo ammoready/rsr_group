@@ -5,7 +5,7 @@ module RsrGroup
 
     def initialize(size, file_length = nil)
       @size         = size
-      @chunk        = []
+      @chunk        = Array.new
       @count        = 0
       @file_length  = file_length
     end
@@ -13,7 +13,7 @@ module RsrGroup
     def add(row)
       @chunk.clear if is_full?
 
-      @chunk << row
+      @chunk.push(row)
 
       @count += 1
     end
