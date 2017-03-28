@@ -9,7 +9,7 @@ describe RsrGroup::Chunker do
   it "has accessors" do
     @chunker.should have_attr_accessor(:chunk)
     @chunker.should have_attr_accessor(:file_length)
-    @chunker.should have_attr_accessor(:count)
+    @chunker.should have_attr_accessor(:current_count)
     @chunker.should have_attr_accessor(:size)
   end
 
