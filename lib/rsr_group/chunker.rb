@@ -19,11 +19,7 @@ module RsrGroup
     end
 
     def is_full?
-      if @chunk.count == @size
-        true
-      else
-        false
-      end
+      @chunk.count == @size
     end
 
     def is_completed?
