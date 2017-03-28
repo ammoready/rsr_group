@@ -11,11 +11,15 @@ module RsrGroup
     end
 
     def add(row)
-      @chunk.clear if is_full?
+      reset if is_full?
 
       @chunk.push(row)
 
       @current_count += 1
+    end
+
+    def reset
+      @chunk.clear
     end
 
     def is_full?
