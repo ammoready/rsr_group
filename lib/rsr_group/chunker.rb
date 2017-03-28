@@ -11,6 +11,8 @@ module RsrGroup
     end
 
     def add(row)
+      @chunk.clear if is_full?
+
       @chunk << row
 
       @count += 1
@@ -18,8 +20,6 @@ module RsrGroup
 
     def is_full?
       if @chunk.count == @size
-        @chunk = []
-
         true
       else
         false
