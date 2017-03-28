@@ -8,7 +8,7 @@ describe RsrGroup::Chunker do
 
   it "has accessors" do
     @chunker.should have_attr_accessor(:chunk)
-    @chunker.should have_attr_accessor(:file_length)
+    @chunker.should have_attr_accessor(:total_count)
     @chunker.should have_attr_accessor(:current_count)
     @chunker.should have_attr_accessor(:size)
   end
@@ -30,7 +30,7 @@ describe RsrGroup::Chunker do
   end
 
   it "should know when it's completed" do
-    @chunker.file_length = 20
+    @chunker.total_count = 20
 
     20.times do
       @chunker.add(["data"])

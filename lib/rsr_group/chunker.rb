@@ -1,13 +1,13 @@
 module RsrGroup
   class Chunker
 
-    attr_accessor :chunk, :file_length, :current_count, :size
+    attr_accessor :chunk, :total_count, :current_count, :size
 
-    def initialize(size, file_length = nil)
+    def initialize(size, total_count = nil)
       @size           = size
       @chunk          = Array.new
       @current_count  = 0
-      @file_length    = file_length
+      @total_count    = total_count
     end
 
     def add(row)
@@ -27,7 +27,7 @@ module RsrGroup
     end
 
     def is_completed?
-      @file_length == @current_count
+      @total_count == @current_count
     end
 
   end
