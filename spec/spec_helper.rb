@@ -7,7 +7,7 @@ require 'pp'
 require "rsr_group"
 
 root = File.expand_path('../..', __FILE__)
-Dir[File.join(root, "spec/support/*.rb")].each { |f| require f }
+Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
 
