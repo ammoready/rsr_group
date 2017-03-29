@@ -30,9 +30,23 @@ module RsrGroup
       new(options).map_prices
     end
 
+    def self.map_prices_as_chunks(size = 15, options = {})
+      requires!(options, :username, :password)
+      new(options).map_prices_as_chunks(size) do |chunk|
+        yield(chunk)
+      end
+    end
+
     def self.quantities(options = {})
       requires!(options, :username, :password)
       new(options).quantities
+    end
+
+    def self.quantities_as_chunks(size = 15, options = {})
+      requires!(options, :username, :password)
+      new(options).quantities_as_chunks(size) do |chunk|
+        yield(chunk)
+      end
     end
 
     def all
@@ -138,40 +152,42 @@ module RsrGroup
 
     def process_as_chunks(size)
       connect(@options) do |ftp|
-        chunk         = []
-        item_count    = 1
+        chunker       = RsrGroup::Chunker.new(size)
         temp_csv_file = Tempfile.new
 
+        # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
+
+          # Pull from the FTP and save as a temp file
           ftp.getbinaryfile(KEYDEALER_FILENAME, temp_csv_file.path)
         else
           ftp.chdir(INVENTORY_DIR)
+
+          # Pull from the FTP and save as a temp file
           ftp.getbinaryfile(INVENTORY_FILENAME, temp_csv_file.path)
         end
 
-        line_count = File.readlines(temp_csv_file).size
+        # total_count is the number of lines in the file
+        chunker.total_count = File.readlines(temp_csv_file).size
 
         CSV.readlines(temp_csv_file, col_sep: ';', quote_char: "\x00").to_enum.with_index(1).each do |row, current_line|
-          chunk << process_row(row)
 
-          # Return chunk if we have reached the end of the file
-          if line_count == current_line
-            yield(chunk)
-          end
+          if chunker.is_full?
+            yield(chunker.chunk)
 
-          # Return if chuck is full
-          if item_count == size
-            yield(chunk)
+            chunker.reset
+          elsif chunker.is_complete?
+            yield(chunker.chunk)
 
-            chunk      = []
-            item_count = 1
+            break
           else
-            item_count += 1
+            chunker.add(process_row(row))
           end
         end
 
         temp_csv_file.unlink
+        ftp.close
       end
     end
 
@@ -199,6 +215,46 @@ module RsrGroup
       rows
     end
 
+    def map_prices_as_chunks(size)
+      connect(@options) do |ftp|
+        chunker       = RsrGroup::Chunker.new(size)
+        temp_csv_file = Tempfile.new
+
+        # Is this a key dealer?
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+        else
+          ftp.chdir(INVENTORY_DIR)
+        end
+
+        # Pull from the FTP and save as a temp file
+        ftp.getbinaryfile(MAP_FILENAME, temp_csv_file.path)
+
+        # total_count is hte number of lines in the file
+        chunker.total_count = File.readlines(temp_csv_file).size
+
+        CSV.readlines(temp_csv_file).each do |row|
+          if chunker.is_full?
+            yield(chunker.chunk)
+
+            chunker.reset
+          elsif chunker.is_complete?
+            yield(chunker.chunk)
+
+            break
+          else
+            chunker.add({
+              stock_number: row[0].strip,
+              map_price:    row[1]
+            })
+          end
+        end
+
+        temp_csv_file.unlink
+        ftp.close
+      end
+    end
+
     def quantities
       rows = []
 
@@ -223,6 +279,47 @@ module RsrGroup
 
       rows
     end
+
+    def quantities_as_chunks(size)
+      connect(@options) do |ftp|
+        chunker       = RsrGroup::Chunker.new(size)
+        temp_csv_file = Tempfile.new
+
+        # Is this a key dealer?
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+        else
+          ftp.chdir(INVENTORY_DIR)
+        end
+
+        # Pull from the FTP and save as a temp file
+        ftp.getbinaryfile(QTY_FILENAME, temp_csv_file.path)
+
+        # total_count is hte number of lines in the file
+        chunker.total_count = File.readlines(temp_csv_file).size
+
+        CSV.readlines(temp_csv_file).each do |row|
+          if chunker.is_full?
+            yield(chunker.chunk)
+
+            chunker.reset
+          elsif chunker.is_complete?
+            yield(chunker.chunk)
+
+            break
+          else
+            chunker.add({
+              stock_number: row[0].rstrip,
+              quantity: row[1].to_i
+            })
+          end
+        end
+
+        temp_csv_file.unlink
+        ftp.close
+      end
+    end
+
 
     private
 
