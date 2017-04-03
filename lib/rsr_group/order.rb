@@ -107,7 +107,11 @@ module RsrGroup
     end
 
     def order_trailer
-      [@identifier, LINE_TYPES.key(:order_trailer), ("%07d" % @items.length)].join(";")
+      [@identifier, LINE_TYPES.key(:order_trailer), ("%07d" % total_quantity)].join(";")
+    end
+
+    def total_quantity
+      @items.map { |x| x.quantity.to_i }.inject(0, :+)
     end
 
   end

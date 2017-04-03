@@ -83,7 +83,7 @@ describe RsrGroup::Order do
       })
       order.add_item({
         rsr_stock_number: "BRS34002",
-        quantity: 1,
+        quantity: 2,
         shipping_carrier: "USPS",
         shipping_method: "PRIO",
       })
