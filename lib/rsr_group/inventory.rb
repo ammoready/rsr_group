@@ -18,11 +18,9 @@ module RsrGroup
       new(options).all
     end
 
-    def self.process_as_chunks(size = 15, options = {})
+    def self.process_as_chunks(size = 15, options = {}, &block)
       requires!(options, :username, :password)
-      new(options).process_as_chunks(size) do |chunk|
-        yield(chunk)
-      end
+      new(options).process_as_chunks(size, &block)
     end
 
     def self.map_prices(options = {})
@@ -30,11 +28,9 @@ module RsrGroup
       new(options).map_prices
     end
 
-    def self.map_prices_as_chunks(size = 15, options = {})
+    def self.map_prices_as_chunks(size = 15, options = {}, &block)
       requires!(options, :username, :password)
-      new(options).map_prices_as_chunks(size) do |chunk|
-        yield(chunk)
-      end
+      new(options).map_prices_as_chunks(size, &block)
     end
 
     def self.quantities(options = {})
@@ -42,11 +38,9 @@ module RsrGroup
       new(options).quantities
     end
 
-    def self.quantities_as_chunks(size = 15, options = {})
+    def self.quantities_as_chunks(size = 15, options = {}, &block)
       requires!(options, :username, :password)
-      new(options).quantities_as_chunks(size) do |chunk|
-        yield(chunk)
-      end
+      new(options).quantities_as_chunks(size, &block)
     end
 
     def all
@@ -150,7 +144,7 @@ module RsrGroup
       items
     end
 
-    def process_as_chunks(size)
+    def process_as_chunks(size, &block)
       connect(@options) do |ftp|
         chunker       = RsrGroup::Chunker.new(size)
         temp_csv_file = Tempfile.new
@@ -215,7 +209,7 @@ module RsrGroup
       rows
     end
 
-    def map_prices_as_chunks(size)
+    def map_prices_as_chunks(size, &block)
       connect(@options) do |ftp|
         chunker       = RsrGroup::Chunker.new(size)
         temp_csv_file = Tempfile.new
@@ -280,7 +274,7 @@ module RsrGroup
       rows
     end
 
-    def quantities_as_chunks(size)
+    def quantities_as_chunks(size, &block)
       connect(@options) do |ftp|
         chunker       = RsrGroup::Chunker.new(size)
         temp_csv_file = Tempfile.new
