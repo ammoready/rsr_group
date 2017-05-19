@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe RsrGroup::Inventory do
 
-  let(:ftp) { instance_double('Net::FTP', :passive= => true) }
+  let(:ftp) { instance_double('Net::FTP', :passive= => true, :debug_mode= => true) }
 
   before do
     allow(Net::FTP).to receive(:open).with('ftp.host.com', 'login', 'password') { |&block| block.call(ftp) }

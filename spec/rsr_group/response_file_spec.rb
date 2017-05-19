@@ -28,7 +28,7 @@ describe RsrGroup::ResponseFile do
     let(:all) { RsrGroup::ResponseFile.all(credentials) }
 
     before do
-      ftp = instance_double("Net::FTP", :passive= => true)
+      ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:nlst).with("*.txt") { ["file1.txt", "file2.txt"] }
       allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
@@ -42,7 +42,7 @@ describe RsrGroup::ResponseFile do
     let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
 
     before do
-      ftp = instance_double("Net::FTP", :passive= => true)
+      ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
       allow(ftp).to receive(:mtime) { Time.at(1488296977) }
@@ -103,7 +103,7 @@ describe RsrGroup::ResponseFile do
       }
 
       before do
-        ftp = instance_double("Net::FTP", :passive= => true)
+        ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
@@ -136,7 +136,7 @@ describe RsrGroup::ResponseFile do
       }
 
       before do
-        ftp = instance_double("Net::FTP", :passive= => true)
+        ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_econf_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
@@ -180,7 +180,7 @@ describe RsrGroup::ResponseFile do
       }
 
       before do
-        ftp = instance_double("Net::FTP", :passive= => true)
+        ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eship_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
