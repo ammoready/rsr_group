@@ -5,6 +5,7 @@ module RsrGroup
       requires!(options, :username, :password)
 
       Net::FTP.open(RsrGroup.config.ftp_host, options[:username], options[:password]) do |ftp|
+        ftp.debug_mode = RsrGroup.config.debug_mode
         ftp.passive = true
         yield ftp
       end
