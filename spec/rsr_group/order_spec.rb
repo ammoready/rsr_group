@@ -77,9 +77,11 @@ describe RsrGroup::Order do
         phone: '(888) 999-000',
         email: 'email@example.com'
       }, {
-        licence_number: "aa-bb-01-cc",
-        name: "Balrog",
-        zip: "22122"
+        licence_number: 'aa-bb-01-cc',
+        name: 'Balrog',
+        zip: '22122',
+        end_customer_name: 'Gimlee',
+        end_customer_phone: '555',
       })
       order.add_item({
         rsr_stock_number: "BRS34002",
@@ -119,9 +121,11 @@ describe RsrGroup::Order do
         phone: '(888) 999-000',
         email: 'email@example.com'
       }, {
-        licence_number: "aa-bb-01-cc",
-        name: "Balrog",
-        zip: "22122"
+        licence_number: 'aa-bb-01-cc',
+        name: 'Balrog',
+        zip: '22122',
+        end_customer_name: 'Gimlee',
+        end_customer_phone: '555',
       })
 
       order.add_item({

@@ -7,10 +7,10 @@ describe RsrGroup::Chunker do
   end
 
   it "has accessors" do
-    @chunker.should have_attr_accessor(:chunk)
-    @chunker.should have_attr_accessor(:total_count)
-    @chunker.should have_attr_accessor(:current_count)
-    @chunker.should have_attr_accessor(:size)
+    expect(@chunker).to have_attr_accessor(:chunk)
+    expect(@chunker).to have_attr_accessor(:total_count)
+    expect(@chunker).to have_attr_accessor(:current_count)
+    expect(@chunker).to have_attr_accessor(:size)
   end
 
   it "tracks count when chunk is added" do
@@ -18,7 +18,7 @@ describe RsrGroup::Chunker do
       @chunker.add(["data"])
     end
 
-    @chunker.chunk.count.should eq(5)
+    expect(@chunker.chunk.count).to eq(5)
   end
 
   it "should know when it's full" do
@@ -26,7 +26,7 @@ describe RsrGroup::Chunker do
       @chunker.add(["data"])
     end
 
-    @chunker.is_full?.should == true
+    expect(@chunker.is_full?).to eq(true)
   end
 
   it "should know when it's complete" do
@@ -36,7 +36,7 @@ describe RsrGroup::Chunker do
       @chunker.add(["data"])
     end
 
-    @chunker.is_complete?.should == true
+    expect(@chunker.is_complete?).to eq(true)
   end
 
 end
