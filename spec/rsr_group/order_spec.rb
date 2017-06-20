@@ -77,7 +77,7 @@ describe RsrGroup::Order do
         phone: '(888) 999-000',
         email: 'email@example.com'
       }, {
-        licence_number: 'aa-bb-01-cc',
+        license_number: 'aa-bb-01-cc',
         name: 'Balrog',
         zip: '22122',
         end_customer_name: 'Gimlee',
@@ -121,7 +121,7 @@ describe RsrGroup::Order do
         phone: '(888) 999-000',
         email: 'email@example.com'
       }, {
-        licence_number: 'aa-bb-01-cc',
+        license_number: 'aa-bb-01-cc',
         name: 'Balrog',
         zip: '22122',
         end_customer_name: 'Gimlee',

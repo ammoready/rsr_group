@@ -2,7 +2,7 @@ module RsrGroup
   class DataRow < Base
   
     attr_reader :committed, :date_shipped, :error_code, :handling_fee,
-      :identifier, :licence_number, :line_type, :message, :name, 
+      :identifier, :license_number, :line_type, :message, :name, 
       :ordered, :quantity, :stock_id, :ship_to_name, :shipped, 
       :shipping_carrier, :shipping_cost, :shipping_method, 
       :rsr_order_number, :tracking_number, :zip
@@ -22,7 +22,7 @@ module RsrGroup
         @zip = points[8]
       when :ffl_dealer # 11
         get_errors(points[-1]) if has_errors && points[-1] != "00000"
-        @licence_number = points[2]
+        @license_number = points[2]
         @name = points[3]
         @zip  = points[4]
       when :order_detail # 20

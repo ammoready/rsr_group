@@ -16,7 +16,7 @@ describe RsrGroup::DataRow do
       let(:data_row) { RsrGroup::DataRow.new("AR1112;11;aa-bb-01-cc;Balrog;22122") }
 
       it { expect(data_row.identifier).to eq("AR1112") }
-      it { expect(data_row.licence_number).to eq("aa-bb-01-cc") }
+      it { expect(data_row.license_number).to eq("aa-bb-01-cc") }
       it { expect(data_row.line_type).to eq(:ffl_dealer) }
       it { expect(data_row.name).to eq("Balrog") }
       it { expect(data_row.zip).to eq("22122") }

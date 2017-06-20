@@ -36,7 +36,7 @@ module RsrGroup
     # @option shipping_info [String] :email
     #
     # @param [Hash] ffl_options optional
-    # @option ffl_options [String] :licence_number *required*
+    # @option ffl_options [String] :license_number *required*
     # @option ffl_options [String] :name           *required*
     # @option ffl_options [String] :zip            *required*
     def add_recipient(shipping_info, ffl_options = {})

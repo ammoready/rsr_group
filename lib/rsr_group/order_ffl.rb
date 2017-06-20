@@ -4,7 +4,7 @@ module RsrGroup
     attr_reader :order_identifier
 
     def initialize(options = {})
-      requires!(options, :order_identifier, :licence_number, :name, :zip, :end_customer_name, :end_customer_phone)
+      requires!(options, :order_identifier, :license_number, :name, :zip, :end_customer_name, :end_customer_phone)
 
       @options = options
       @order_identifier = options[:order_identifier]
@@ -14,7 +14,7 @@ module RsrGroup
       [
         order_identifier,
         LINE_TYPES.key(:ffl_dealer),
-        @options[:licence_number],
+        @options[:license_number],
         @options[:name],
         @options[:zip],
         @options[:end_customer_name],

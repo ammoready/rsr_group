@@ -5,7 +5,7 @@ describe RsrGroup::OrderFFL do
   let(:order_ffl) {
     RsrGroup::OrderFFL.new({
       order_identifier: '100-444',
-      licence_number: 'aa-bb-01-cc',
+      license_number: 'aa-bb-01-cc',
       name: 'Balrog',
       zip: '22122',
       end_customer_name: 'Gimlee',
