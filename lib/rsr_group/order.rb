@@ -18,7 +18,7 @@ module RsrGroup
 
       @credentials     = options.select { |k, v| [:username, :password].include?(k) }
       @identifier      = options[:identifier]
-      @merchant_number = options[:merchant_number]
+      @merchant_number = "%05d" % options[:merchant_number] # Leading zeros are required
       @sequence_number = "%04d" % options[:sequence_number] # Leading zeros are required
       @timestamp       = Time.now.strftime("%Y%m%d")
       @items           = []
