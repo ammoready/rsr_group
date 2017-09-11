@@ -90,6 +90,7 @@ module RsrGroup
         ensure
           io.close
         end
+        ftp.close
       end
       true
     end

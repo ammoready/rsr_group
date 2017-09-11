@@ -7,8 +7,11 @@ module RsrGroup
     end
 
     def authenticated?
-      connect(@options) { |ftp| ftp.status }
-      true
+      connect(@options) do |ftp| 
+        ftp.status
+        ftp.close
+      end
+      return true
     rescue RsrGroup::NotAuthenticated
       false
     end

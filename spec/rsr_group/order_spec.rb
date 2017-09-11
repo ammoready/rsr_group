@@ -140,6 +140,7 @@ describe RsrGroup::Order do
       allow(ftp).to receive(:chdir).with("eo/incoming") { true }
       allow(ftp).to receive(:storlines).with("STOR " + order.filename, instance_of(StringIO)) { true }
       allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
+      allow(ftp).to receive(:close)
     end
 
     it { expect(order.submit!).to be(true) }

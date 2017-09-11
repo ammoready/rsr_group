@@ -1,6 +1,7 @@
 module RsrGroup
   class ResponseFile < Base
 
+    attr_reader :content
     attr_reader :filename
     attr_reader :timestamp
 
@@ -22,8 +23,11 @@ module RsrGroup
 
       Base.connect(options) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        ftp.nlst("*.txt")
+        @resp = ftp.nlst("*.txt")
+        ftp.close
       end
+
+      @resp
     end
 
     def content
@@ -32,6 +36,7 @@ module RsrGroup
         ftp.chdir(RsrGroup.config.response_dir)
         @timestamp = ftp.mtime(@filename)
         @content   = ftp.gettextfile(@filename, nil)
+        ftp.close
       end
     end
     alias get_content content
