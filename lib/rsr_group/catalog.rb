@@ -68,7 +68,7 @@ module RsrGroup
         short_description:  sanitize(row[2]),
         category:           row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]).name,
         brand:              sanitize(row[10]),
-        map_price:          sanitize(row[72]),
+        map_price:          sanitize(row[70]),
         price:              sanitize(row[6]),
         quantity:           (Integer(sanitize(row[8])) rescue 0),
         mfg_number:         sanitize(row[11]),
