@@ -75,6 +75,7 @@ module RsrGroup
         weight:             sanitize(row[7]),
         long_description:   sanitize(row[13]),
         features: {
+          model:            sanitize(row[9]),
           shipping_length:  sanitize(row[74]),
           shipping_width:   sanitize(row[75]),
           shipping_height:  sanitize(row[76])
