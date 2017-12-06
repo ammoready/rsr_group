@@ -62,23 +62,23 @@ module RsrGroup
 
     def process_row(row)
       {
-        upc:                sanitize(row[1]),
-        item_identifier:    sanitize(row[0]),
-        name:               sanitize(row[2]),
-        short_description:  sanitize(row[2]),
-        category:           row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]).name,
-        brand:              sanitize(row[10]),
-        map_price:          sanitize(row[70]),
-        price:              sanitize(row[6]),
-        quantity:           (Integer(sanitize(row[8])) rescue 0),
-        mfg_number:         sanitize(row[11]),
-        weight:             sanitize(row[7]),
-        long_description:   sanitize(row[13]),
+        upc:               sanitize(row[1]),
+        item_identifier:   sanitize(row[0]),
+        name:              sanitize(row[2]),
+        model:             sanitize(row[9]),
+        short_description: sanitize(row[2]),
+        category:          row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]).name,
+        brand:             sanitize(row[10]),
+        map_price:         sanitize(row[70]),
+        price:             sanitize(row[6]),
+        quantity:          (Integer(sanitize(row[8])) rescue 0),
+        mfg_number:        sanitize(row[11]),
+        weight:            sanitize(row[7]),
+        long_description:  sanitize(row[13]),
         features: {
-          model:            sanitize(row[9]),
-          shipping_length:  sanitize(row[74]),
-          shipping_width:   sanitize(row[75]),
-          shipping_height:  sanitize(row[76])
+          shipping_length: sanitize(row[74]),
+          shipping_width:  sanitize(row[75]),
+          shipping_height: sanitize(row[76])
         }
       }
     end
