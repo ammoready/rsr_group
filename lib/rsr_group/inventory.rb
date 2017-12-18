@@ -15,13 +15,12 @@ module RsrGroup
       quote_char: "|",
       headers_in_file: false,
       user_provided_headers: [
-        :stock_number, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
+        :item_identifier, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
         :price, :weight, :quantity, :model, :manufacturer, :mfg_number, :allocated_closeout_deleted, :long_description,
         :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required, :blocked_from_drop_ship,
         :date_entered, :map_price, :image_disclaimer, :length, :width, :height, :null
       ].flatten,
       remove_unmapped_keys: true,
-      verbose: true
     }
 
     def initialize(options = {})
