@@ -14,6 +14,12 @@ module RsrGroup
       return true
     rescue RsrGroup::NotAuthenticated
       false
+    rescue Net::FTPPermError => e
+      if e.message =~ /authentication failed/i
+        return false
+      else
+        raise e
+      end
     end
 
   end
