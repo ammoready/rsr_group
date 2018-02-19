@@ -58,5 +58,38 @@ module RsrGroup
       end
     end
 
+    def self.quantity(chunk_size, options = {}, &block)
+      requires!(options, :username, :password)
+      new(options).quantity(chunk_size, &block)
+    end
+
+    def quantity(chunk_size, &block)
+      connect(@options) do |ftp|
+        tempfile = Tempfile.new
+
+        # Is this a key dealer?
+        if ftp.nlst.include?(KEYDEALER_DIR)
+          ftp.chdir(KEYDEALER_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(KEYDEALER_FILENAME, tempfile.path)
+        else
+          ftp.chdir(INVENTORY_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
+        end
+
+        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
+          chunk.each do |item|
+            item = Hash[*item.select {|k,v| [:item_identifier, :quantity].include?(k)}.flatten]
+          end
+
+          yield(chunk)
+        end
+
+        tempfile.unlink
+        ftp.close
+      end
+    end
+
   end
 end
