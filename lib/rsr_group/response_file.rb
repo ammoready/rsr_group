@@ -50,7 +50,7 @@ module RsrGroup
       get_content
 
       if @content.length == 0
-        raise ZeroByteFile.new("filename: #{@filename}")
+        raise ZeroByteFile.new("File is empty (filename: #{@filename})")
       end
 
       @json = {
