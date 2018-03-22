@@ -23,6 +23,7 @@ require 'rsr_group/user'
 module RsrGroup
   class NotAuthenticated < StandardError; end
   class UnknownDepartment < StandardError; end
+  class ZeroByteFile < StandardError; end
 
   class << self
     attr_accessor :config

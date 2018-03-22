@@ -49,6 +49,10 @@ module RsrGroup
     def to_json
       get_content
 
+      if @content.length == 0
+        raise ZeroByteFile.new("filename: #{@filename}")
+      end
+
       @json = {
         response_type: response_type,
         identifier: @content.lines[1].split(";")[0],
