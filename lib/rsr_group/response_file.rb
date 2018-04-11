@@ -35,7 +35,7 @@ module RsrGroup
       return @content if @content
       connect(@credentials) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        @timestamp = ftp.mtime(@filename)
+        # @timestamp = ftp.mtime(@filename)
         @content   = ftp.gettextfile(@filename, nil)
         ftp.close
       end
