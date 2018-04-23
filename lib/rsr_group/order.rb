@@ -7,6 +7,17 @@ module RsrGroup
   # * Call {#submit!} to send the order
   class Order < Base
 
+    class ResponseStruct < Struct.new(:success, :message, :data)
+
+      # Simple response object to pass along success/falure/messages of any process
+      # Usage:
+      #   response = ResponseStruct.new(true)
+      #   response = ResponseStruct.new(false, "You did the wrong thing")
+      #   response = ResponseStruct.new(true, nil, { result: 200 })
+
+      alias success? success
+    end
+
     # @param [Hash] options
     # @option options [String]  :merchant_number *required*
     # @option options [Integer] :sequence_number *required*
@@ -87,12 +98,16 @@ module RsrGroup
         io = StringIO.new(to_txt)
         begin
           ftp.storlines("STOR " + filename, io)
+          success = ftp.nlst.include?(filename)
+          @response = ResponseStruct.new(success, nil, modified: ftp.mtime(filename), size: ftp.size(filename))
         ensure
           io.close
         end
         ftp.close
       end
-      true
+      @response || ResponseStruct.new(false)
+    rescue Net::FTPPermError => e
+      return ResponseStruct.new(false, e.message.chomp)
     end
 
     private
