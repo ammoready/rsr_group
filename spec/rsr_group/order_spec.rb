@@ -139,11 +139,14 @@ describe RsrGroup::Order do
       ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(ftp).to receive(:chdir).with("eo/incoming") { true }
       allow(ftp).to receive(:storlines).with("STOR " + order.filename, instance_of(StringIO)) { true }
+      allow(ftp).to receive(:nlst) { [order.filename] }
+      allow(ftp).to receive(:mtime).with(order.filename) { Time.now }
+      allow(ftp).to receive(:size).with(order.filename) { 314 }
       allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
       allow(ftp).to receive(:close)
     end
 
-    it { expect(order.submit!).to be(true) }
+    it { expect(order.submit!.success?).to be(true) }
   end
 
 end

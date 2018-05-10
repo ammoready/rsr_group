@@ -81,8 +81,10 @@ describe RsrGroup::ResponseFile do
       let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
       let(:expectation) {
         {
-          response_type: "Error",
-          identifier:    "4000-1000",
+          response_type:  "Error",
+          identifier:     "4000-1000",
+          filename:       filename,
+          account_number: "12345",
           errors:  [
             { identifier: "4000-1000",
               line_type: 'order_detail',
@@ -122,6 +124,8 @@ describe RsrGroup::ResponseFile do
       let(:expectation) {
         { response_type:    "Confirmation",
           identifier:       "4000-1020",
+          filename:         filename,
+          account_number:   "12345",
           rsr_order_number: "17222",
           details: [
             { identifier: "4000-1020",
@@ -157,6 +161,8 @@ describe RsrGroup::ResponseFile do
         {
           response_type:    "Shipping",
           identifier:       "5000-2000",
+          filename:         filename,
+          account_number:   "12345",
           rsr_order_number: "99999",
           details: [
             { identifier: "5000-2000",

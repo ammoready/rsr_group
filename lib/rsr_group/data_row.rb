@@ -26,9 +26,9 @@ module RsrGroup
         @name = points[3]
         @zip  = points[4]
       when :order_detail # 20
-        get_errors(points[-1]) if has_errors && points[-1] != "00000"
-        @quantity   = points[3].to_i
-        @stock_id   = points[2]
+        get_errors(points[6]) if has_errors && points[6] != "00000"
+        @quantity = points[3].to_i
+        @stock_id = points[2]
         @shipping_carrier = points[4]
         @shipping_method  = SHIPPING_METHODS[points[5]]
       when :confirmation_header # 30

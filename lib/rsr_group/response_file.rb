@@ -8,8 +8,9 @@ module RsrGroup
     def initialize(options = {})
       requires!(options, :username, :password, :filename)
 
-      @credentials = options.select { |k, v| [:username, :password].include?(k) }
-      @filename    = options[:filename]
+      @credentials    = options.select { |k, v| [:username, :password].include?(k) }
+      @filename       = File.basename(options[:filename])
+      @account_number = @filename.split('-')[2]
     end
 
     FILE_TYPES.each do |key, value|
@@ -34,7 +35,7 @@ module RsrGroup
       return @content if @content
       connect(@credentials) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        @timestamp = ftp.mtime(@filename)
+        # @timestamp = ftp.mtime(@filename)
         @content   = ftp.gettextfile(@filename, nil)
         ftp.close
       end
@@ -48,9 +49,15 @@ module RsrGroup
     def to_json
       get_content
 
+      if @content.length == 0
+        raise ZeroByteFile.new("File is empty (filename: #{@filename})")
+      end
+
       @json = {
         response_type: response_type,
-        identifier: @content.lines[1].split(";")[0]
+        identifier: @content.lines[1].split(";")[0],
+        filename: @filename,
+        account_number: @account_number,
       }
 
       return parse_eerr  if error?
