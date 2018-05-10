@@ -29,6 +29,11 @@ module RsrGroup
       @options = options
     end
 
+    def self.quantity(chunk_size, options = {}, &block)
+      requires!(options, :username, :password)
+      new(options).quantity(chunk_size, &block)
+    end
+
     def self.all(chunk_size, options = {}, &block)
       requires!(options, :username, :password)
       new(options).all(chunk_size, &block)
@@ -56,11 +61,6 @@ module RsrGroup
         tempfile.unlink
         ftp.close
       end
-    end
-
-    def self.quantity(chunk_size, options = {}, &block)
-      requires!(options, :username, :password)
-      new(options).quantity(chunk_size, &block)
     end
 
     def quantity(chunk_size, &block)
