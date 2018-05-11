@@ -1,9 +1,8 @@
 module RsrGroup
   class ResponseFile < Base
 
-    attr_reader :content
     attr_reader :filename
-    attr_reader :timestamp
+    attr_accessor :content, :mtime
 
     def initialize(options = {})
       requires!(options, :username, :password, :filename)
@@ -17,6 +16,26 @@ module RsrGroup
       define_method("#{value.downcase}?".to_sym) do
         response_type == value
       end
+    end 
+
+    def self.get_each(options = {}, &block)
+      requires!(options, :username, :password)
+
+      Base.connect(options) do |ftp|
+        ftp.chdir(RsrGroup.config.response_dir)
+
+        @list = ftp.nlst("*.txt")
+        @list.each do |file|
+          resource         = new(options.merge(filename: file))
+          resource.content = ftp.gettextfile(file, nil)
+          resource.mtime   = ftp.mtime(file)
+          yield(resource)
+        end
+
+        ftp.close
+      end
+
+      @list  
     end
 
     def self.all(options = {})
@@ -35,8 +54,8 @@ module RsrGroup
       return @content if @content
       connect(@credentials) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        # @timestamp = ftp.mtime(@filename)
-        @content   = ftp.gettextfile(@filename, nil)
+        @mtime = ftp.mtime(@filename)
+        @content = ftp.gettextfile(@filename, nil)
         ftp.close
       end
     end

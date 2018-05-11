@@ -24,6 +24,30 @@ describe RsrGroup::ResponseFile do
     end
   end
 
+  describe '.get_each' do
+    before do
+      ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
+      allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
+      allow(ftp).to receive(:nlst).with("*.txt") { ["ECONF-0001.txt", "ECONF-0002.txt"] }
+      allow(ftp).to receive(:gettextfile).with("ECONF-0001.txt", nil) { test_econf_file }
+      allow(ftp).to receive(:mtime).with("ECONF-0001.txt") { Time.at(1485820800) }
+      allow(ftp).to receive(:gettextfile).with("ECONF-0002.txt", nil) { test_eerr_file }
+      allow(ftp).to receive(:mtime).with("ECONF-0002.txt") { Time.at(1485820800) }
+      allow(ftp).to receive(:close)
+    end
+
+    it 'iterates over the files' do
+      list = RsrGroup::ResponseFile.get_each(credentials) do |file|
+        expect(file.to_json).to have_key(:response_type)
+        expect(file.to_json).to have_key(:identifier)
+        expect(file.mtime).to eq(DateTime.new(2017, 1, 31).to_time)
+      end
+
+      expect(list.length).to eq(2)
+    end
+  end
+
   describe '.all' do
     let(:all) { RsrGroup::ResponseFile.all(credentials) }
 
