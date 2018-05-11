@@ -74,9 +74,11 @@ module RsrGroup
 
       @json = {
         response_type: response_type,
-        identifier: @content.lines[1].split(";")[0],
         filename: @filename,
         account_number: @account_number,
+        rsr_order_number: nil,
+        details: [],
+        errors: [],
       }
 
       return parse_eerr  if error?
@@ -113,7 +115,6 @@ module RsrGroup
       end.compact
 
       @json.merge!({
-        rsr_order_number: @content.lines[0].split(";")[3].chomp,
         details: details
       })
     end
