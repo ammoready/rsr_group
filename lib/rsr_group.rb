@@ -3,6 +3,7 @@ require 'rsr_group/version'
 require 'csv'
 require 'date'
 require 'net/ftp'
+require 'tempfile'
 require 'smarter_csv'
 
 require 'rsr_group/base'
@@ -10,6 +11,7 @@ require 'rsr_group/constants'
 require 'rsr_group/chunker'
 require 'rsr_group/data_row'
 require 'rsr_group/department'
+require 'rsr_group/catalog'
 require 'rsr_group/inventory'
 require 'rsr_group/order'
 require 'rsr_group/order_detail'
@@ -21,6 +23,7 @@ require 'rsr_group/user'
 module RsrGroup
   class NotAuthenticated < StandardError; end
   class UnknownDepartment < StandardError; end
+  class ZeroByteFile < StandardError; end
 
   class << self
     attr_accessor :config

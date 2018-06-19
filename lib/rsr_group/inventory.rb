@@ -1,407 +1,133 @@
 module RsrGroup
   class Inventory < Base
 
-    KEYDEALER_DIR      = 'keydealer'.freeze
-    INVENTORY_DIR      = 'ftpdownloads'.freeze
+    KEYDEALER_DIR = 'keydealer'.freeze
+    INVENTORY_DIR = 'ftpdownloads'.freeze
+    QTY_FILENAME  = 'IM-QTY-CSV.csv'.freeze
+    MAP_FILENAME  = 'retail-map.csv'.freeze
     INVENTORY_FILENAME = 'rsrinventory-new.txt'.freeze
     KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
-    QTY_FILENAME       = 'IM-QTY-CSV.csv'.freeze
-    MAP_FILENAME       = 'retail-map.csv'.freeze
+
+    DEFAULT_SMART_OPTS = {
+      chunk_size: 100,
+      convert_values_to_numeric: false,
+      col_sep: ";",
+      quote_char: "|",
+      headers_in_file: false,
+      user_provided_headers: [
+        :item_identifier, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
+        :price, :weight, :quantity, :model, :manufacturer, :mfg_number, :allocated_closeout_deleted, :long_description,
+        :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required, :blocked_from_drop_ship,
+        :date_entered, :map_price, :image_disclaimer, :length, :width, :height, :null
+      ].flatten,
+      remove_unmapped_keys: true,
+    }
 
     def initialize(options = {})
       requires!(options, :username, :password)
+
       @options = options
     end
 
-    def self.all(options = {})
+    def self.get_quantity_file(options = {})
       requires!(options, :username, :password)
-      new(options).all
+      new(options).get_quantity_file
     end
 
-    def self.process_as_chunks(size = 15, options = {}, &block)
+    def self.quantity(chunk_size, options = {}, &block)
       requires!(options, :username, :password)
-      new(options).process_as_chunks(size, &block)
+      new(options).quantity(chunk_size, &block)
     end
 
-    def self.map_prices(options = {})
+    def self.all(chunk_size, options = {}, &block)
       requires!(options, :username, :password)
-      new(options).map_prices
+      new(options).all(chunk_size, &block)
     end
 
-    def self.map_prices_as_chunks(size = 15, options = {}, &block)
-      requires!(options, :username, :password)
-      new(options).map_prices_as_chunks(size, &block)
-    end
-
-    def self.quantities(options = {})
-      requires!(options, :username, :password)
-      new(options).quantities
-    end
-
-    def self.quantities_as_chunks(size = 15, options = {}, &block)
-      requires!(options, :username, :password)
-      new(options).quantities_as_chunks(size, &block)
-    end
-
-    def all
-      items = []
-
+    def all(chunk_size, &block)
       connect(@options) do |ftp|
-        if ftp.nlst.include?(KEYDEALER_DIR)
-          ftp.chdir(KEYDEALER_DIR)
-          lines = ftp.gettextfile(KEYDEALER_FILENAME, nil)
-        else
-          ftp.chdir(INVENTORY_DIR)
-          lines = ftp.gettextfile(INVENTORY_FILENAME, nil)
-        end
-
-        # Use a zero-byte char as `quote_char` since the data has no quote character.
-        CSV.parse(lines, col_sep: ';', quote_char: "\x00") do |row|
-          items << {
-            stock_number: sanitize(row[0]),
-            upc: sanitize(row[1]),
-            description: sanitize(row[2]),
-            department: row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]),
-            manufacturer_id: sanitize(row[4]),
-            retail_price: sanitize(row[5]),
-            regular_price: sanitize(row[6]),
-            weight: sanitize(row[7]),
-            quantity: (Integer(sanitize(row[8])) rescue 0),
-            model: sanitize(row[9]),
-            manufacturer_name: sanitize(row[10]),
-            manufacturer_part_number: sanitize(row[11]),
-            allocated_closeout_deleted: sanitize(row[12]),
-            description_full: sanitize(row[13]),
-            image_name: sanitize(row[14]),
-            restricted_states: {
-              AK: row[15] == 'Y',
-              AL: row[16] == 'Y',
-              AR: row[17] == 'Y',
-              AZ: row[18] == 'Y',
-              CA: row[19] == 'Y',
-              CO: row[20] == 'Y',
-              CT: row[21] == 'Y',
-              DC: row[22] == 'Y',
-              DE: row[23] == 'Y',
-              FL: row[24] == 'Y',
-              GA: row[25] == 'Y',
-              HI: row[26] == 'Y',
-              IA: row[27] == 'Y',
-              ID: row[28] == 'Y',
-              IL: row[29] == 'Y',
-              IN: row[30] == 'Y',
-              KS: row[31] == 'Y',
-              KY: row[32] == 'Y',
-              LA: row[33] == 'Y',
-              MA: row[36] == 'Y',
-              MD: row[37] == 'Y',
-              ME: row[38] == 'Y',
-              MI: row[39] == 'Y',
-              MN: row[40] == 'Y',
-              MO: row[41] == 'Y',
-              MS: row[42] == 'Y',
-              MT: row[43] == 'Y',
-              NC: row[44] == 'Y',
-              ND: row[45] == 'Y',
-              NE: row[46] == 'Y',
-              NH: row[47] == 'Y',
-              NJ: row[48] == 'Y',
-              NM: row[49] == 'Y',
-              NV: row[50] == 'Y',
-              NY: row[51] == 'Y',
-              OH: row[52] == 'Y',
-              OK: row[53] == 'Y',
-              OR: row[54] == 'Y',
-              PA: row[55] == 'Y',
-              RI: row[56] == 'Y',
-              SC: row[57] == 'Y',
-              SD: row[58] == 'Y',
-              TN: row[59] == 'Y',
-              TX: row[60] == 'Y',
-              UT: row[61] == 'Y',
-              VA: row[62] == 'Y',
-              VT: row[63] == 'Y',
-              WA: row[64] == 'Y',
-              WI: row[65] == 'Y',
-              WV: row[66] == 'Y',
-              WY: row[67] == 'Y',
-            },
-            ground_shipping_only: row[68] == 'Y',
-            adult_signature_required: row[69] == 'Y',
-            blocked_from_drop_ship: row[70] == 'Y',
-            date_entered: row[71].nil? ? row[71] : Date.strptime(row[71], '%Y%m%d'),
-            retail_map: sanitize(row[72]),
-            image_disclaimer: row[73] == 'Y',
-            shipping_length: sanitize(row[74]),
-            shipping_width: sanitize(row[75]),
-            shipping_height: sanitize(row[76]),
-          }
-        end
-
-        ftp.close
-      end
-
-      items
-    end
-
-    def process_as_chunks(size, &block)
-      connect(@options) do |ftp|
-        chunker       = RsrGroup::Chunker.new(size)
-        temp_csv_file = Tempfile.new
+        tempfile = Tempfile.new
 
         # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
-
           # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(KEYDEALER_FILENAME, temp_csv_file.path)
+          ftp.getbinaryfile(KEYDEALER_FILENAME, tempfile.path)
         else
           ftp.chdir(INVENTORY_DIR)
-
           # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(INVENTORY_FILENAME, temp_csv_file.path)
+          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
         end
 
-        # total_count is the number of lines in the file
-        chunker.total_count = File.readlines(temp_csv_file).size
-
-        CSV.readlines(temp_csv_file, col_sep: ';', quote_char: "\x00").to_enum.with_index(1).each do |row, current_line|
-
-          if chunker.is_full?
-            yield(chunker.chunk)
-
-            chunker.reset
-          elsif chunker.is_complete?
-            yield(chunker.chunk)
-
-            break
-          else
-            chunker.add(process_row(row))
-          end
+        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
+          yield(chunk)
         end
 
-        temp_csv_file.unlink
+        tempfile.unlink
         ftp.close
       end
     end
 
-    def map_prices
-      rows = []
-
+    def get_quantity_file
       connect(@options) do |ftp|
-        if ftp.nlst.include?(KEYDEALER_DIR)
-          ftp.chdir(KEYDEALER_DIR)
-        else
-          ftp.chdir(INVENTORY_DIR)
-        end
-
-        ftp.gettextfile(MAP_FILENAME, nil) do |line|
-          points = line.split(',').map(&:rstrip)
-          rows << {
-            stock_number: points[0],
-            map_price:    points[1],
-          }
-        end
-
-        ftp.close
-      end
-
-      rows
-    end
-
-    def map_prices_as_chunks(size, &block)
-      connect(@options) do |ftp|
-        chunker       = RsrGroup::Chunker.new(size)
-        temp_csv_file = Tempfile.new
+        quantity_tempfile = Tempfile.new
+        tempfile          = Tempfile.new
 
         # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(QTY_FILENAME, quantity_tempfile.path)
         else
           ftp.chdir(INVENTORY_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(QTY_FILENAME, quantity_tempfile.path)
         end
 
-        # Pull from the FTP and save as a temp file
-        ftp.getbinaryfile(MAP_FILENAME, temp_csv_file.path)
-
-        # total_count is hte number of lines in the file
-        chunker.total_count = File.readlines(temp_csv_file).size
-
-        CSV.readlines(temp_csv_file).each do |row|
-          if chunker.is_full?
-            yield(chunker.chunk)
-
-            chunker.reset
-          elsif chunker.is_complete?
-            yield(chunker.chunk)
-
-            break
-          else
-            chunker.add({
-              stock_number: row[0].strip,
-              map_price:    row[1]
-            })
+        SmarterCSV.process(quantity_tempfile.open, {
+          chunk_size: 100,
+          force_utf8: true,
+          convert_values_to_numeric: false,
+          user_provided_headers: [:item_identifier, :quantity]
+        }) do |chunk|
+          chunk.each do |item|
+            tempfile.puts("#{item[:item_identifier]}, #{item[:quantity]}")
           end
         end
 
-        temp_csv_file.unlink
+        quantity_tempfile.unlink
         ftp.close
+
+        tempfile.path
       end
     end
 
-    def quantities
-      rows = []
-
+    def quantity(chunk_size, &block)
       connect(@options) do |ftp|
-        if ftp.nlst.include?(KEYDEALER_DIR)
-          ftp.chdir(KEYDEALER_DIR)
-        else
-          ftp.chdir(INVENTORY_DIR)
-        end
-
-        csv = ftp.gettextfile(QTY_FILENAME, nil)
-
-        CSV.parse(csv) do |row|
-          rows << { 
-            stock_number: row[0].rstrip,
-            quantity: row[1].to_i,
-          }
-        end
-
-        ftp.close
-      end
-
-      rows
-    end
-
-    def quantities_as_chunks(size, &block)
-      connect(@options) do |ftp|
-        chunker       = RsrGroup::Chunker.new(size)
-        temp_csv_file = Tempfile.new
+        tempfile = Tempfile.new
 
         # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(KEYDEALER_FILENAME, tempfile.path)
         else
           ftp.chdir(INVENTORY_DIR)
+          # Pull from the FTP and save as a temp file
+          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
         end
 
-        # Pull from the FTP and save as a temp file
-        ftp.getbinaryfile(QTY_FILENAME, temp_csv_file.path)
-
-        # total_count is hte number of lines in the file
-        chunker.total_count = File.readlines(temp_csv_file).size
-
-        CSV.readlines(temp_csv_file).each do |row|
-          if chunker.is_full?
-            yield(chunker.chunk)
-
-            chunker.reset
-          elsif chunker.is_complete?
-            yield(chunker.chunk)
-
-            break
-          else
-            chunker.add({
-              stock_number: row[0].rstrip,
-              quantity: row[1].to_i
-            })
+        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
+          chunk.each do |item|
+            item = Hash[*item.select {|k,v| [:item_identifier, :quantity].include?(k)}.flatten]
           end
+
+          yield(chunk)
         end
 
-        temp_csv_file.unlink
+        tempfile.unlink
         ftp.close
       end
-    end
-
-
-    private
-
-    def sanitize(data)
-      return data unless data.is_a?(String)
-      data.strip
-    end
-
-    def process_row(row)
-      {
-        stock_number: sanitize(row[0]),
-        upc: sanitize(row[1]),
-        description: sanitize(row[2]),
-        department: row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]),
-        manufacturer_id: sanitize(row[4]),
-        retail_price: sanitize(row[5]),
-        regular_price: sanitize(row[6]),
-        weight: sanitize(row[7]),
-        quantity: (Integer(sanitize(row[8])) rescue 0),
-        model: sanitize(row[9]),
-        manufacturer_name: sanitize(row[10]),
-        manufacturer_part_number: sanitize(row[11]),
-        allocated_closeout_deleted: sanitize(row[12]),
-        description_full: sanitize(row[13]),
-        image_name: sanitize(row[14]),
-        restricted_states: {
-          AK: row[15] == 'Y',
-          AL: row[16] == 'Y',
-          AR: row[17] == 'Y',
-          AZ: row[18] == 'Y',
-          CA: row[19] == 'Y',
-          CO: row[20] == 'Y',
-          CT: row[21] == 'Y',
-          DC: row[22] == 'Y',
-          DE: row[23] == 'Y',
-          FL: row[24] == 'Y',
-          GA: row[25] == 'Y',
-          HI: row[26] == 'Y',
-          IA: row[27] == 'Y',
-          ID: row[28] == 'Y',
-          IL: row[29] == 'Y',
-          IN: row[30] == 'Y',
-          KS: row[31] == 'Y',
-          KY: row[32] == 'Y',
-          LA: row[33] == 'Y',
-          MA: row[36] == 'Y',
-          MD: row[37] == 'Y',
-          ME: row[38] == 'Y',
-          MI: row[39] == 'Y',
-          MN: row[40] == 'Y',
-          MO: row[41] == 'Y',
-          MS: row[42] == 'Y',
-          MT: row[43] == 'Y',
-          NC: row[44] == 'Y',
-          ND: row[45] == 'Y',
-          NE: row[46] == 'Y',
-          NH: row[47] == 'Y',
-          NJ: row[48] == 'Y',
-          NM: row[49] == 'Y',
-          NV: row[50] == 'Y',
-          NY: row[51] == 'Y',
-          OH: row[52] == 'Y',
-          OK: row[53] == 'Y',
-          OR: row[54] == 'Y',
-          PA: row[55] == 'Y',
-          RI: row[56] == 'Y',
-          SC: row[57] == 'Y',
-          SD: row[58] == 'Y',
-          TN: row[59] == 'Y',
-          TX: row[60] == 'Y',
-          UT: row[61] == 'Y',
-          VA: row[62] == 'Y',
-          VT: row[63] == 'Y',
-          WA: row[64] == 'Y',
-          WI: row[65] == 'Y',
-          WV: row[66] == 'Y',
-          WY: row[67] == 'Y',
-        },
-        ground_shipping_only: row[68] == 'Y',
-        adult_signature_required: row[69] == 'Y',
-        blocked_from_drop_ship: row[70] == 'Y',
-        date_entered: row[71].nil? ? row[71] : Date.strptime(row[71], '%Y%m%d'),
-        retail_map: sanitize(row[72]),
-        image_disclaimer: row[73] == 'Y',
-        shipping_length: sanitize(row[74]),
-        shipping_width: sanitize(row[75]),
-        shipping_height: sanitize(row[76]),
-      }
     end
 
   end

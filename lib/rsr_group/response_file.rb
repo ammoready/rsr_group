@@ -1,21 +1,41 @@
 module RsrGroup
   class ResponseFile < Base
 
-    attr_reader :content
     attr_reader :filename
-    attr_reader :timestamp
+    attr_accessor :content, :mtime
 
     def initialize(options = {})
       requires!(options, :username, :password, :filename)
 
-      @credentials = options.select { |k, v| [:username, :password].include?(k) }
-      @filename    = options[:filename]
+      @credentials    = options.select { |k, v| [:username, :password].include?(k) }
+      @filename       = File.basename(options[:filename])
+      @account_number = @filename.split('-')[2]
     end
 
     FILE_TYPES.each do |key, value|
       define_method("#{value.downcase}?".to_sym) do
         response_type == value
       end
+    end 
+
+    def self.get_each(options = {}, &block)
+      requires!(options, :username, :password)
+
+      Base.connect(options) do |ftp|
+        ftp.chdir(RsrGroup.config.response_dir)
+
+        @list = ftp.nlst("*.txt")
+        @list.each do |file|
+          resource         = new(options.merge(filename: file))
+          resource.content = ftp.gettextfile(file, nil)
+          resource.mtime   = ftp.mtime(file)
+          yield(resource)
+        end
+
+        ftp.close
+      end
+
+      @list  
     end
 
     def self.all(options = {})
@@ -34,8 +54,8 @@ module RsrGroup
       return @content if @content
       connect(@credentials) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
-        @timestamp = ftp.mtime(@filename)
-        @content   = ftp.gettextfile(@filename, nil)
+        @mtime = ftp.mtime(@filename)
+        @content = ftp.gettextfile(@filename, nil)
         ftp.close
       end
     end
@@ -48,9 +68,17 @@ module RsrGroup
     def to_json
       get_content
 
+      if @content.length == 0
+        raise ZeroByteFile.new("File is empty (filename: #{@filename})")
+      end
+
       @json = {
         response_type: response_type,
-        identifier: @content.lines[1].split(";")[0]
+        filename: @filename,
+        account_number: @account_number,
+        rsr_order_number: nil,
+        details: [],
+        errors: [],
       }
 
       return parse_eerr  if error?
@@ -87,7 +115,6 @@ module RsrGroup
       end.compact
 
       @json.merge!({
-        rsr_order_number: @content.lines[0].split(";")[3].chomp,
         details: details
       })
     end
