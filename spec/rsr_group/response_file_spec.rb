@@ -40,7 +40,8 @@ describe RsrGroup::ResponseFile do
     it 'iterates over the files' do
       list = RsrGroup::ResponseFile.get_each(credentials) do |file|
         expect(file.to_json).to have_key(:response_type)
-        expect(file.to_json).to have_key(:identifier)
+        expect(file.to_json).to have_key(:filename)
+        expect(file.to_json).to have_key(:account_number)
         expect(file.mtime).to eq(DateTime.new(2017, 1, 31).to_time)
       end
 
@@ -106,10 +107,11 @@ describe RsrGroup::ResponseFile do
       let(:expectation) {
         {
           response_type:  "Error",
-          identifier:     "4000-1000",
           filename:       filename,
           account_number: "12345",
-          errors:  [
+          rsr_order_number: nil,
+          details: [],
+          errors: [
             { identifier: "4000-1000",
               line_type: 'order_detail',
               quantity: '1',
@@ -146,8 +148,8 @@ describe RsrGroup::ResponseFile do
       let(:filename) { "ECONF-RSRGP-12345-20161117-0002.txt" }
       let(:response_file) { RsrGroup::ResponseFile.new(credentials.merge(filename: filename)) }
       let(:expectation) {
-        { response_type:    "Confirmation",
-          identifier:       "4000-1020",
+        { 
+          response_type:    "Confirmation",
           filename:         filename,
           account_number:   "12345",
           rsr_order_number: "17222",
@@ -162,7 +164,8 @@ describe RsrGroup::ResponseFile do
               committed: '0',
               ordered: '1',
               stock_id: "MPIMAG485GRY" }
-          ]
+          ],
+          errors: []
         }
       }
 
@@ -184,12 +187,12 @@ describe RsrGroup::ResponseFile do
       let(:expectation) {
         {
           response_type:    "Shipping",
-          identifier:       "5000-2000",
           filename:         filename,
           account_number:   "12345",
-          rsr_order_number: "99999",
+          rsr_order_number: nil,
           details: [
-            { identifier: "5000-2000",
+            { 
+              identifier: "5000-2000",
               line_type: 'shipping_header',
               ship_to_name: "Bellatrix",
               shipping_carrier: "UPS",
@@ -198,18 +201,22 @@ describe RsrGroup::ResponseFile do
               handling_fee: "0",
               rsr_order_number: "58776",
               shipping_cost: "800",
-              tracking_number: "1Z7539320314612868"},
-            { identifier: "5000-2000",
+              tracking_number: "1Z7539320314612868"
+            }, { 
+              identifier: "5000-2000",
               line_type: 'shipping_detail',
               stock_id: "CS20NPKZ",
               ordered: '1',
-              shipped: '1' },
-            { identifier: "5000-2000",
+              shipped: '1' 
+            }, { 
+              identifier: "5000-2000",
               line_type: 'shipping_detail',
               stock_id: "MPIMAG485GRY",
               ordered: '1',
-              shipped: '1' }
+              shipped: '1'
+            }
           ],
+          errors: []
         }
       }
 
