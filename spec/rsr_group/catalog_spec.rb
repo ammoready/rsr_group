@@ -21,6 +21,15 @@ describe RsrGroup::Catalog do
       allow(Tempfile).to receive(:new).and_return(sample_file)
       allow(sample_file).to receive(:unlink) { nil }
     end
+
+    it 'iterates over the whole file' do
+      count = 0
+      RsrGroup::Catalog.all(6, credentials) do |chunk|
+        count += chunk.length
+      end
+
+      expect(count).to eq(60)
+    end
   end
 
 end
