@@ -20,7 +20,6 @@ module RsrGroup
     def all(chunk_size, &block)
       connect(@options) do |ftp|
         begin
-          chunker      = RsrGroup::Chunker.new(chunk_size)
           csv_tempfile = Tempfile.new
 
           if ftp.nlst.include?(KEYDEALER_DIR)
@@ -31,20 +30,8 @@ module RsrGroup
             ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
           end
 
-          chunker.total_count = File.readlines(csv_tempfile).size
-
           CSV.readlines(csv_tempfile, col_sep: ';', quote_char: "\x00").to_enum.with_index(1).each do |row, current_line|
-            if chunker.is_full?
-              yield(chunker.chunk)
-
-              chunker.reset
-            elsif chunker.is_complete?
-              yield(chunker.chunk)
-
-              break
-            else
-              chunker.add(process_row(row))
-            end
+              process_row(row)
           end
         end
 
