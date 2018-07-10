@@ -1,3 +1,3 @@
 module RsrGroup
-  VERSION = '3.0.0.pre'.freeze
+  VERSION = '3.0.0.pre.1'.freeze
 end
