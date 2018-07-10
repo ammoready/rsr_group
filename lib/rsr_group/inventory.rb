@@ -60,7 +60,9 @@ module RsrGroup
         end
 
         SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
-          yield(chunk)
+          chunk.each do |item|
+            yield(item)
+          end
         end
 
         tempfile.unlink
@@ -120,9 +122,9 @@ module RsrGroup
         SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
           chunk.each do |item|
             item = Hash[*item.select {|k,v| [:item_identifier, :quantity].include?(k)}.flatten]
-          end
 
-          yield(chunk)
+            yield(item)
+          end
         end
 
         tempfile.unlink
