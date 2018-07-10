@@ -24,11 +24,11 @@ describe RsrGroup::Catalog do
 
     it 'iterates over the whole file' do
       count = 0
-      RsrGroup::Catalog.all(5, credentials) do |chunk|
+      RsrGroup::Catalog.all(6, credentials) do |chunk|
         count += chunk.length
       end
 
-      expect(count).to eq(15)
+      expect(count).to eq(60)
     end
   end
 
