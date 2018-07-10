@@ -8,7 +8,6 @@ require 'smarter_csv'
 
 require 'rsr_group/base'
 require 'rsr_group/constants'
-require 'rsr_group/chunker'
 require 'rsr_group/data_row'
 require 'rsr_group/department'
 require 'rsr_group/catalog'
