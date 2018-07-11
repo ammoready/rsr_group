@@ -30,7 +30,7 @@ module RsrGroup
             ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
           end
 
-          CSV.foreach(csv_tempfile, {col_sep: ';', quote_char: "\x00"}).each do |row|
+          CSV.foreach(csv_tempfile, { col_sep: ';', quote_char: "\x00" }).each do |row|
             yield(process_row(row))
           end
         end
