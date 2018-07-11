@@ -12,12 +12,12 @@ module RsrGroup
       @options = options
     end
 
-    def self.all(chunk_size = 15, options = {}, &block)
+    def self.all(options = {}, &block)
       requires!(options, :username, :password)
-      new(options).all(chunk_size, &block)
+      new(options).all &block
     end
 
-    def all(chunk_size, &block)
+    def all(&block)
       connect(@options) do |ftp|
         begin
           csv_tempfile = Tempfile.new
@@ -54,7 +54,7 @@ module RsrGroup
         name:              sanitize(row[2]),
         model:             sanitize(row[9]),
         short_description: sanitize(row[2]),
-        category:          row[3].nil? ? row[3] : RsrGroup::Department.new(row[3]).name,
+        category:          row[3].nil? ? nil : RsrGroup::Department.new(row[3]).name,
         brand:             sanitize(row[10]),
         map_price:         sanitize(row[70]),
         price:             sanitize(row[6]),
