@@ -24,8 +24,8 @@ describe RsrGroup::Catalog do
 
     it 'iterates over the whole file' do
       count = 0
-      RsrGroup::Catalog.all(credentials) do |chunk|
-        count += chunk.length
+      RsrGroup::Catalog.all(credentials) do |item|
+        count += 1
       end
 
       expect(count).to eq(60)

@@ -9,7 +9,7 @@ module RsrGroup
     KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
 
     DEFAULT_SMART_OPTS = {
-      chunk_size: 100,
+      chunk_size: 500,
       convert_values_to_numeric: false,
       col_sep: ";",
       quote_char: "|",
@@ -34,17 +34,17 @@ module RsrGroup
       new(options).get_quantity_file
     end
 
-    def self.quantity(chunk_size, options = {}, &block)
+    def self.quantity(options = {}, &block)
       requires!(options, :username, :password)
-      new(options).quantity(chunk_size, &block)
+      new(options).quantity &block
     end
 
-    def self.all(chunk_size, options = {}, &block)
+    def self.all(options = {}, &block)
       requires!(options, :username, :password)
-      new(options).all(chunk_size, &block)
+      new(options).all &block
     end
 
-    def all(chunk_size, &block)
+    def all(&block)
       connect(@options) do |ftp|
         tempfile = Tempfile.new
 
@@ -59,7 +59,7 @@ module RsrGroup
           ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
         end
 
-        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
+        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS) do |chunk|
           chunk.each do |item|
             yield(item)
           end
@@ -73,7 +73,7 @@ module RsrGroup
     def get_quantity_file
       connect(@options) do |ftp|
         quantity_tempfile = Tempfile.new
-        tempfile          = Tempfile.new
+        tempfile          = Tempfile.new(['quantity-', '.csv'])
 
         # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
@@ -85,6 +85,8 @@ module RsrGroup
           # Pull from the FTP and save as a temp file
           ftp.getbinaryfile(QTY_FILENAME, quantity_tempfile.path)
         end
+
+        ftp.close
 
         SmarterCSV.process(quantity_tempfile.open, {
           chunk_size: 100,
@@ -93,18 +95,16 @@ module RsrGroup
           user_provided_headers: [:item_identifier, :quantity]
         }) do |chunk|
           chunk.each do |item|
-            tempfile.puts("#{item[:item_identifier]}, #{item[:quantity]}")
+            tempfile.puts("#{item[:item_identifier]},#{item[:quantity].to_i}")
           end
         end
 
         quantity_tempfile.unlink
-        ftp.close
-
         tempfile.path
       end
     end
 
-    def quantity(chunk_size, &block)
+    def quantity(&block)
       connect(@options) do |ftp|
         tempfile = Tempfile.new
 
@@ -112,23 +112,30 @@ module RsrGroup
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
           # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(KEYDEALER_FILENAME, tempfile.path)
+          ftp.getbinaryfile(QTY_FILENAME, tempfile.path)
         else
           ftp.chdir(INVENTORY_DIR)
           # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
+          ftp.getbinaryfile(QTY_FILENAME, tempfile.path)
         end
+        ftp.close
 
-        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS.merge(chunk_size: chunk_size)) do |chunk|
+        smart_opts = { 
+          col_sep: ",",
+          headers_in_file: false,
+          user_provided_headers: [
+            :item_identifier,
+            :quantity
+          ]
+        }
+
+        SmarterCSV.process(tempfile, smart_opts) do |chunk|
           chunk.each do |item|
-            item = Hash[*item.select {|k,v| [:item_identifier, :quantity].include?(k)}.flatten]
-
             yield(item)
           end
         end
 
         tempfile.unlink
-        ftp.close
       end
     end
 
