@@ -26,6 +26,21 @@ describe RsrGroup::Catalog do
       count = 0
       RsrGroup::Catalog.all(credentials) do |item|
         count += 1
+        case count
+        when 1
+          expect(item[:item_identifier]).to eq('RU-22C101')
+          expect(item[:quantity]).to eq(0)
+          expect(item[:price]).to eq('272.05')
+        when 23
+          expect(item[:item_identifier]).to eq('SU-22C108')
+          expect(item[:quantity]).to eq(15)
+          expect(item[:price]).to eq('290.25')
+        when 42
+          # This row is marked 'Allocated'
+          expect(item[:item_identifier]).to eq('MU-22C112')
+          expect(item[:quantity]).to eq(0)
+          expect(item[:price]).to eq('133.30')
+        end
       end
 
       expect(count).to eq(60)

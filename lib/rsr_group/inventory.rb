@@ -1,37 +1,38 @@
 module RsrGroup
   class Inventory < Base
 
-    KEYDEALER_DIR = 'keydealer'.freeze
-    INVENTORY_DIR = 'ftpdownloads'.freeze
-    QTY_FILENAME  = 'IM-QTY-CSV.csv'.freeze
-    MAP_FILENAME  = 'retail-map.csv'.freeze
-    INVENTORY_FILENAME = 'rsrinventory-new.txt'.freeze
-    KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
-
-    DEFAULT_SMART_OPTS = {
+    # This corresponds with the 'rsrinventory-new.txt' and 'rsrinventory-keydlr-new.txt' files 
+    # and the +DEFAULT_CATALOG_FILENAME+ and +KEYDEALER_CATALOG_FILENAME+ constants
+    DEFAULT_CATALOG_SMART_OPTS = {
       chunk_size: 500,
       convert_values_to_numeric: false,
-      col_sep: ";",
-      quote_char: "|",
+      col_sep: ';',
+      quote_char: '|',
       headers_in_file: false,
       user_provided_headers: [
         :item_identifier, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
         :price, :weight, :quantity, :model, :manufacturer, :mfg_number, :allocated_closeout_deleted, :long_description,
-        :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required, :blocked_from_drop_ship,
-        :date_entered, :map_price, :image_disclaimer, :length, :width, :height, :null
+        :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required, 
+        :blocked_from_drop_ship, :date_entered, :map_price, :image_disclaimer, :length, :width, :height, :null
       ].flatten,
       remove_unmapped_keys: true,
     }
 
+    # This corresponds with the 'IM-QTY-CSV.csv' file and the +QTY_FILENAME+ constant
+    DEFAULT_QUANTITY_SMART_OPTS = {
+      chunk_size: 2000,
+      convert_values_to_numeric: false,
+      col_sep: ',',
+      headers_in_file: false,
+      user_provided_headers: [
+        :item_identifier,
+        :quantity,
+      ]
+    }
+
     def initialize(options = {})
       requires!(options, :username, :password)
-
       @options = options
-    end
-
-    def self.get_quantity_file(options = {})
-      requires!(options, :username, :password)
-      new(options).get_quantity_file
     end
 
     def self.quantity(options = {}, &block)
@@ -51,59 +52,32 @@ module RsrGroup
         # Is this a key dealer?
         if ftp.nlst.include?(KEYDEALER_DIR)
           ftp.chdir(KEYDEALER_DIR)
-          # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(KEYDEALER_FILENAME, tempfile.path)
+          # Pull from the FTP and save to a tempfile
+          ftp.getbinaryfile(KEYDEALER_CATALOG_FILENAME, tempfile.path)
         else
-          ftp.chdir(INVENTORY_DIR)
-          # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(INVENTORY_FILENAME, tempfile.path)
+          ftp.chdir(DEFAULT_DIR)
+          # Pull from the FTP and save to a tempfile
+          ftp.getbinaryfile(DEFAULT_CATALOG_FILENAME, tempfile.path)
         end
+        ftp.close
 
-        SmarterCSV.process(tempfile, DEFAULT_SMART_OPTS) do |chunk|
+        SmarterCSV.process(tempfile, DEFAULT_CATALOG_SMART_OPTS) do |chunk|
           chunk.each do |item|
+            if !item[:allocated_closeout_deleted].nil? && item[:allocated_closeout_deleted].to_sym.eql?(:Allocated)
+              item[:quantity] = 0
+            else
+              item[:quantity] = item[:quantity].to_i
+            end
+
             yield(item)
           end
         end
 
         tempfile.unlink
-        ftp.close
       end
     end
 
-    def get_quantity_file
-      connect(@options) do |ftp|
-        quantity_tempfile = Tempfile.new
-        tempfile          = Tempfile.new(['quantity-', '.csv'])
-
-        # Is this a key dealer?
-        if ftp.nlst.include?(KEYDEALER_DIR)
-          ftp.chdir(KEYDEALER_DIR)
-          # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(QTY_FILENAME, quantity_tempfile.path)
-        else
-          ftp.chdir(INVENTORY_DIR)
-          # Pull from the FTP and save as a temp file
-          ftp.getbinaryfile(QTY_FILENAME, quantity_tempfile.path)
-        end
-
-        ftp.close
-
-        SmarterCSV.process(quantity_tempfile.open, {
-          chunk_size: 100,
-          force_utf8: true,
-          convert_values_to_numeric: false,
-          user_provided_headers: [:item_identifier, :quantity]
-        }) do |chunk|
-          chunk.each do |item|
-            tempfile.puts("#{item[:item_identifier]},#{item[:quantity].to_i}")
-          end
-        end
-
-        quantity_tempfile.unlink
-        tempfile.path
-      end
-    end
-
+    # Parse through the 'IM-QTY-CSV.csv' file
     def quantity(&block)
       connect(@options) do |ftp|
         tempfile = Tempfile.new
@@ -114,23 +88,15 @@ module RsrGroup
           # Pull from the FTP and save as a temp file
           ftp.getbinaryfile(QTY_FILENAME, tempfile.path)
         else
-          ftp.chdir(INVENTORY_DIR)
+          ftp.chdir(DEFAULT_DIR)
           # Pull from the FTP and save as a temp file
           ftp.getbinaryfile(QTY_FILENAME, tempfile.path)
         end
         ftp.close
 
-        smart_opts = { 
-          col_sep: ",",
-          headers_in_file: false,
-          user_provided_headers: [
-            :item_identifier,
-            :quantity
-          ]
-        }
-
-        SmarterCSV.process(tempfile, smart_opts) do |chunk|
+        SmarterCSV.process(tempfile, DEFAULT_QUANTITY_SMART_OPTS) do |chunk|
           chunk.each do |item|
+            item[:quantity] = item[:quantity].to_i
             yield(item)
           end
         end

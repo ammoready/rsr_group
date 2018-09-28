@@ -1,6 +1,13 @@
 module RsrGroup
   class Base
 
+    KEYDEALER_DIR = 'keydealer'.freeze
+    DEFAULT_DIR   = 'ftpdownloads'.freeze
+    QTY_FILENAME  = 'IM-QTY-CSV.csv'.freeze
+    MAP_FILENAME  = 'retail-map.csv'.freeze
+    DEFAULT_CATALOG_FILENAME   = 'rsrinventory-new.txt'.freeze
+    KEYDEALER_CATALOG_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
+
     def self.connect(options = {})
       requires!(options, :username, :password)
 

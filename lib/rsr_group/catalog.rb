@@ -1,14 +1,8 @@
 module RsrGroup
   class Catalog < Base
 
-    KEYDEALER_DIR      = 'keydealer'.freeze
-    INVENTORY_DIR      = 'ftpdownloads'.freeze
-    INVENTORY_FILENAME = 'rsrinventory-new.txt'.freeze
-    KEYDEALER_FILENAME = 'rsrinventory-keydlr-new.txt'.freeze
-
     def initialize(options = {})
       requires!(options, :username, :password)
-
       @options = options
     end
 
@@ -20,23 +14,29 @@ module RsrGroup
     def all(&block)
       connect(@options) do |ftp|
         begin
-          csv_tempfile = Tempfile.new
+          tempfile = Tempfile.new
 
           if ftp.nlst.include?(KEYDEALER_DIR)
             ftp.chdir(KEYDEALER_DIR)
-            ftp.getbinaryfile(KEYDEALER_FILENAME, csv_tempfile.path)
+            ftp.getbinaryfile(KEYDEALER_CATALOG_FILENAME, tempfile.path)
           else
-            ftp.chdir(INVENTORY_DIR)
-            ftp.getbinaryfile(INVENTORY_FILENAME, csv_tempfile.path)
+            ftp.chdir(DEFAULT_DIR)
+            ftp.getbinaryfile(DEFAULT_CATALOG_FILENAME, tempfile.path)
           end
+          ftp.close
 
-          CSV.foreach(csv_tempfile, { col_sep: ';', quote_char: "\x00" }).each do |row|
-            yield(process_row(row))
+          CSV.foreach(tempfile, { col_sep: ';', quote_char: "\x00" }).each do |row|
+            item = process_row(row)
+
+            if !row[12].nil? && row[12].to_sym.eql?(:Allocated)
+              item[:quantity] = 0
+            end
+
+            yield(item)
           end
         end
 
-        csv_tempfile.unlink
-        ftp.close
+        tempfile.unlink
       end
     end
 
@@ -48,19 +48,22 @@ module RsrGroup
     end
 
     def process_row(row)
+      category_name = row[3].nil? ? nil : RsrGroup::Department.new(row[3]).name
+
       {
-        upc:               sanitize(row[1]),
-        item_identifier:   sanitize(row[0]),
-        name:              sanitize(row[2]),
-        model:             sanitize(row[9]),
+        upc:             sanitize(row[1]),
+        item_identifier: sanitize(row[0]),
+        name:            sanitize(row[2]),
+        model:           sanitize(row[9]),
+        category:        category_name,
+        brand:           sanitize(row[10]),
+        msrp:            sanitize(row[5]),
+        price:           sanitize(row[6]),
+        map_price:       sanitize(row[70]),
+        quantity:        (Integer(sanitize(row[8])) rescue 0),
+        mfg_number:      sanitize(row[11]),
+        weight:          sanitize(row[7]),
         short_description: sanitize(row[2]),
-        category:          row[3].nil? ? nil : RsrGroup::Department.new(row[3]).name,
-        brand:             sanitize(row[10]),
-        map_price:         sanitize(row[70]),
-        price:             sanitize(row[6]),
-        quantity:          (Integer(sanitize(row[8])) rescue 0),
-        mfg_number:        sanitize(row[11]),
-        weight:            sanitize(row[7]),
         long_description:  sanitize(row[13]),
         features: {
           shipping_length: sanitize(row[74]),
