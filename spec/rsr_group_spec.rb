@@ -1,8 +1,13 @@
 require "spec_helper"
 
 describe RsrGroup do
-  it "has a version number" do
-    expect(RsrGroup::VERSION).not_to be nil
+
+  describe 'constants' do
+    it { expect(RsrGroup::FILE_TYPES).to be_a(Hash) }
+    it { expect(RsrGroup::LINE_TYPES).to be_a(Hash) }
+    it { expect(RsrGroup::SHIPPING_CARRIERS).to be_a(Array) }
+    it { expect(RsrGroup::SHIPPING_METHODS).to be_a(Hash) }
+    it { expect(RsrGroup::ERROR_CODES).to be_a(Hash) }
   end
 
   describe "#configure" do
