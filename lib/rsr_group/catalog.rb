@@ -6,12 +6,14 @@ module RsrGroup
       @options = options
     end
 
-    def self.all(options = {}, &block)
+    def self.all(options = {})
       requires!(options, :username, :password)
-      new(options).all &block
+      new(options).all
     end
 
-    def all(&block)
+    def all
+      items = []
+
       connect(@options) do |ftp|
         begin
           tempfile = Tempfile.new
@@ -32,12 +34,14 @@ module RsrGroup
               item[:quantity] = 0
             end
 
-            yield(item)
+            items << item
           end
         end
 
         tempfile.unlink
       end
+
+      items
     end
 
     private
