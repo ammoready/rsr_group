@@ -22,20 +22,20 @@ describe RsrGroup::Inventory do
       allow(sample_file).to receive(:unlink) { nil }
     end
 
-    it 'iterates over the whole file' do
-      count = 0
-      RsrGroup::Inventory.all(credentials) do |item|
-        count += 1
-        case count
-        when 1
+    it 'returns items as an array' do
+      items = RsrGroup::Inventory.all(credentials)
+
+      items.each_with_index do |item, index|
+        case index
+        when 0
           expect(item[:item_identifier]).to eq('RU-22C101')
           expect(item[:quantity]).to eq(0)
           expect(item[:price]).to eq('272.05')
-        when 23
+        when 22
           expect(item[:item_identifier]).to eq('SU-22C108')
           expect(item[:quantity]).to eq(15)
           expect(item[:price]).to eq('290.25')
-        when 42
+        when 41
           # This row is marked 'Allocated'
           expect(item[:item_identifier]).to eq('MU-22C112')
           expect(item[:quantity]).to eq(0)
@@ -43,7 +43,7 @@ describe RsrGroup::Inventory do
         end
       end
 
-      expect(count).to eq(60)
+      expect(items.count).to eq(60)
     end
   end
 
@@ -59,24 +59,24 @@ describe RsrGroup::Inventory do
       allow(sample_file).to receive(:unlink) { nil }
     end
 
-    it 'iterates over the whole file' do
-      count = 0
-      RsrGroup::Inventory.quantity(credentials) do |item|
-        count += 1
-        case count
-        when 1
+    it 'returns items as an array' do
+      items = RsrGroup::Inventory.quantity(credentials)
+
+      items.each_with_index do |item, index|
+        case index
+        when 0
           expect(item[:item_identifier]).to eq('RU-22C101')
           expect(item[:quantity]).to eq(98)
-        when 22
+        when 21
           expect(item[:item_identifier]).to eq('SU-22C107')
           expect(item[:quantity]).to eq(6)
-        when 60
+        when 59
           expect(item[:item_identifier]).to eq('MU-22C130')
           expect(item[:quantity]).to eq(0)
         end
       end
 
-      expect(count).to eq(60)
+      expect(items.count).to eq(60)
     end
   end
 
