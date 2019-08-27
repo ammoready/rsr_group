@@ -1,7 +1,7 @@
 module RsrGroup
   class Inventory < Base
 
-    # This corresponds with the 'rsrinventory-new.txt' and 'rsrinventory-keydlr-new.txt' files 
+    # This corresponds with the 'rsrinventory-new.txt' and 'rsrinventory-keydlr-new.txt' files
     # and the +DEFAULT_CATALOG_FILENAME+ and +KEYDEALER_CATALOG_FILENAME+ constants
     DEFAULT_CATALOG_SMART_OPTS = {
       chunk_size: 500,
@@ -12,7 +12,7 @@ module RsrGroup
       user_provided_headers: [
         :item_identifier, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
         :price, :weight, :quantity, :model, :manufacturer, :mfg_number, :allocated_closeout_deleted, :long_description,
-        :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required, 
+        :image_name, 51.times.map { |i| "state_#{i}".to_sym }, :ships_ground_only, :signature_required,
         :blocked_from_drop_ship, :date_entered, :map_price, :image_disclaimer, :length, :width, :height, :null
       ].flatten,
       remove_unmapped_keys: true,
@@ -35,17 +35,19 @@ module RsrGroup
       @options = options
     end
 
-    def self.quantity(options = {}, &block)
+    def self.quantity(options = {})
       requires!(options, :username, :password)
-      new(options).quantity &block
+      new(options).quantity
     end
 
-    def self.all(options = {}, &block)
+    def self.all(options = {})
       requires!(options, :username, :password)
-      new(options).all &block
+      new(options).all
     end
 
-    def all(&block)
+    def all
+      items = []
+
       connect(@options) do |ftp|
         tempfile = Tempfile.new
 
@@ -69,16 +71,20 @@ module RsrGroup
               item[:quantity] = item[:quantity].to_i
             end
 
-            yield(item)
+            items << item
           end
         end
 
         tempfile.unlink
       end
+
+      items
     end
 
     # Parse through the 'IM-QTY-CSV.csv' file
-    def quantity(&block)
+    def quantity
+      items = []
+
       connect(@options) do |ftp|
         tempfile = Tempfile.new
 
@@ -97,12 +103,15 @@ module RsrGroup
         SmarterCSV.process(tempfile, DEFAULT_QUANTITY_SMART_OPTS) do |chunk|
           chunk.each do |item|
             item[:quantity] = item[:quantity].to_i
-            yield(item)
+
+            items << item
           end
         end
 
         tempfile.unlink
       end
+
+      items
     end
 
   end
