@@ -7,7 +7,7 @@ module RsrGroup
       chunk_size: 500,
       convert_values_to_numeric: false,
       col_sep: ';',
-      quote_char: '|',
+      quote_char: '~',
       headers_in_file: false,
       user_provided_headers: [
         :item_identifier, :upc, :short_description, :department_number, :manufacturer_id, :retail_price,
