@@ -142,7 +142,7 @@ describe RsrGroup::Order do
       allow(ftp).to receive(:nlst) { [order.filename] }
       allow(ftp).to receive(:mtime).with(order.filename) { Time.now }
       allow(ftp).to receive(:size).with(order.filename) { 314 }
-      allow(Net::FTP).to receive(:open).with("ftp.host.com", "login", "password") { |&block| block.call(ftp) }
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", {} '2222', "login", "password" }) { |&block| block.call(ftp) }
       allow(ftp).to receive(:close)
     end
 
