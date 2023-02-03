@@ -27,7 +27,7 @@ describe RsrGroup::ResponseFile do
   describe '.get_each' do
     before do
       ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
-      allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:nlst).with("*.txt") { ["ECONF-0001.txt", "ECONF-0002.txt"] }
       allow(ftp).to receive(:gettextfile).with("ECONF-0001.txt", nil) { test_econf_file }
@@ -56,7 +56,7 @@ describe RsrGroup::ResponseFile do
       ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:nlst).with("*.txt") { ["file1.txt", "file2.txt"] }
-      allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
       allow(ftp).to receive(:close)
     end
 
@@ -72,7 +72,7 @@ describe RsrGroup::ResponseFile do
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
       allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
       allow(ftp).to receive(:mtime) { Time.at(1488296977) }
-      allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+      allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
       allow(ftp).to receive(:close)
       response_file.content
     end
@@ -137,7 +137,7 @@ describe RsrGroup::ResponseFile do
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eerr_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
-        allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+        allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
         allow(ftp).to receive(:close)
       end
 
@@ -174,7 +174,7 @@ describe RsrGroup::ResponseFile do
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_econf_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
-        allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+        allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
         allow(ftp).to receive(:close)
       end
 
@@ -225,7 +225,7 @@ describe RsrGroup::ResponseFile do
         allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
         allow(ftp).to receive(:gettextfile).with(filename, nil) { test_eship_file }
         allow(ftp).to receive(:mtime) { Time.at(1488296977) }
-        allow(Net::FTP).to receive(:open).with("ftp.host.com", "2222", "login", "password") { |&block| block.call(ftp) }
+        allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
         allow(ftp).to receive(:close)
       end
 
