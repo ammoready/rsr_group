@@ -11,7 +11,7 @@ module RsrGroup
     def self.connect(options = {})
       requires!(options, :username, :password)
 
-      Net::FTP.open(RsrGroup.config.ftp_host, options[:username], options[:password]) do |ftp|
+      Net::FTP.open(RsrGroup.config.ftp_host, { port: RsrGroup.config.ftp_port, username: options[:username], password: options[:password], ssl: true }) do |ftp|
         ftp.debug_mode = RsrGroup.config.debug_mode
         ftp.passive = true
         yield ftp

@@ -7,7 +7,7 @@ describe RsrGroup::Inventory do
   let(:credentials) { { username: 'login', password: 'password' } }
 
   before do
-    allow(Net::FTP).to receive(:open).with('ftp.host.com', 'login', 'password') { |&block| block.call(ftp) }
+    allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
   end
 
   describe '.all' do

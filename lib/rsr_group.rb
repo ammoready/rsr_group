@@ -39,13 +39,15 @@ module RsrGroup
   class Configuration
     attr_accessor :debug_mode
     attr_accessor :ftp_host
+    attr_accessor :ftp_port
     attr_accessor :submission_dir
     attr_accessor :response_dir
     attr_accessor :vendor_email
 
     def initialize
       @debug_mode     ||= false
-      @ftp_host       ||= "ftp.rsrgroup.com"
+      @ftp_host       ||= "ftps.rsrgroup.com"
+      @ftp_port       ||= "2222"
       @submission_dir ||= File.join("eo", "incoming")
       @response_dir   ||= File.join("eo", "outgoing")
       @vendor_email   ||= nil
