@@ -24,12 +24,12 @@ module RsrGroup
       Base.connect(options) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
 
-        @list = ftp.nlst("*.txt")
-        @list.each do |file|
+        @list = ftp.nlst("*.txt").map do |file|
           resource         = new(options.merge(filename: file))
           resource.content = ftp.gettextfile(file, nil)
           resource.mtime   = ftp.mtime(file)
-          yield(resource)
+          
+          resource
         end
 
         ftp.close
