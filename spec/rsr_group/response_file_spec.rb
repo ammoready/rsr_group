@@ -29,7 +29,7 @@ describe RsrGroup::ResponseFile do
       ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
-      allow(ftp).to receive(:nlst).with("*.txt") { ["ECONF-0001.txt", "ECONF-0002.txt"] }
+      allow(ftp).to receive(:list).with("*.txt") { ["ECONF-0001.txt", "ECONF-0002.txt"] }
       allow(ftp).to receive(:gettextfile).with("ECONF-0001.txt", nil) { test_econf_file }
       allow(ftp).to receive(:mtime).with("ECONF-0001.txt") { Time.at(1485820800) }
       allow(ftp).to receive(:gettextfile).with("ECONF-0002.txt", nil) { test_eerr_file }
@@ -55,7 +55,7 @@ describe RsrGroup::ResponseFile do
     before do
       ftp = instance_double("Net::FTP", :passive= => true, :debug_mode= => true)
       allow(ftp).to receive(:chdir).with("eo/outgoing") { true }
-      allow(ftp).to receive(:nlst).with("*.txt") { ["file1.txt", "file2.txt"] }
+      allow(ftp).to receive(:list).with("*.txt") { ["file1.txt", "file2.txt"] }
       allow(Net::FTP).to receive(:open).with("ftp.host.com", {:password=>"password", :port=>"2222", :ssl=>true, :username=>"login"}) { |&block| block.call(ftp) }
       allow(ftp).to receive(:close)
     end
