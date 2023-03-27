@@ -24,11 +24,7 @@ module RsrGroup
       Base.connect(options) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
 
-        @list = []
-
-        ftp.list("*.txt").each do |file|
-          @list << file.split.last
-        end
+        @list = ftp.list("*.txt").map { |line| line.split.last }
         
         @list.each do |file|
           resource         = new(options.merge(filename: file))
@@ -49,11 +45,7 @@ module RsrGroup
       Base.connect(options) do |ftp|
         ftp.chdir(RsrGroup.config.response_dir)
 
-        @resp = []
-
-        ftp.list("*.txt").each do |file|
-          @resp << file.split.last
-        end
+        @resp = ftp.list("*.txt").map { |line| line.split.last }
 
         ftp.close
       end
