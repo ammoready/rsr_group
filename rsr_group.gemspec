@@ -24,11 +24,11 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "smarter_csv", "~> 1.1.4"
+  spec.add_runtime_dependency "smarter_csv"
 
-  spec.add_development_dependency "bundler", "~> 1.15"
-  spec.add_development_dependency "memory_profiler", "~> 0.9"
-  spec.add_development_dependency "rake", ">= 12.3.3"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "webmock", "~> 1.20"
+  spec.add_development_dependency "bundler",
+  spec.add_development_dependency "memory_profiler"
+  spec.add_development_dependency "rake"
+  spec.add_development_dependency "rspec"
+  spec.add_development_dependency "webmock"
 end
