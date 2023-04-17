@@ -27,7 +27,7 @@ module RsrGroup
           end
           ftp.close
 
-          CSV.foreach(tempfile, { col_sep: ';', quote_char: "\x00" }).each do |row|
+          CSV.foreach(tempfile, col_sep: ';', quote_char: "\x00").each do |row|
             item = process_row(row)
 
             if !row[12].nil? && row[12].to_sym.eql?(:Allocated)
