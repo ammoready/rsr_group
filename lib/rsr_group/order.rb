@@ -31,7 +31,7 @@ module RsrGroup
       @identifier      = options[:identifier]
       @merchant_number = "%05d" % options[:merchant_number] # Leading zeros are required
       @sequence_number = "%04d" % options[:sequence_number] # Leading zeros are required
-      @timestamp       = Time.now.strftime("%Y%m%d")
+      @timestamp       = Time.now.in_time_zone('Eastern Time (US & Canada)').strftime("%Y%m%d")
       @items           = []
     end
 
