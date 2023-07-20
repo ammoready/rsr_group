@@ -20,7 +20,7 @@ describe RsrGroup::Order do
 
   describe '#initialize' do
     it { expect(basic_order.nil?).to be(false) }
-    it { expect(basic_order.instance_variable_get(:@timestamp)).to eq('20161212') }
+    it { expect(basic_order.instance_variable_get(:@timestamp)).to eq('20230720') }
     it { expect(basic_order.instance_variable_get(:@merchant_number)).to eq("04444") }
     it { expect(basic_order.instance_variable_get(:@sequence_number)).to eq("0001") }
   end
@@ -54,7 +54,7 @@ describe RsrGroup::Order do
   end
 
   describe '#filename' do
-    it { expect(basic_order.filename).to eq('EORD-04444-20161212-0001.txt') }
+    it { expect(basic_order.filename).to eq('EORD-04444-20230720-0001.txt') }
   end
 
   describe "#to_txt" do
