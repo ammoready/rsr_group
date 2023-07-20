@@ -5,7 +5,7 @@ describe RsrGroup::Order do
   before do
     now_double = double()
     allow(now_double).to receive(:strftime).with("%Y%m%d") { "20161212" }
-    allow(TimeWithZone).to receive(:now).and_return(now_double)
+    allow(ActiveSupport::TimeWithZone).to receive(:now).and_return(now_double)
   end
 
   let(:basic_order) { 
