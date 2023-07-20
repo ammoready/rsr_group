@@ -26,6 +26,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "smarter_csv", "~> 1.1.4"
 
+  spec.add_development_dependency "activesupport", "~> 5"
   spec.add_development_dependency "bundler", "~> 1.15"
   spec.add_development_dependency "memory_profiler", "~> 0.9"
   spec.add_development_dependency "rake", ">= 12.3.3"
