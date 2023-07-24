@@ -2,7 +2,7 @@ module SampleFiles
 
   def test_eord_file
     <<-TXT.chomp
-FILEHEADER;00;12345;20161212;0001
+FILEHEADER;00;12345;20230720;0001
 1000-400;10;Bellatrix;;123 Winchester Ave;;Happyville;CA;12345;888999000;Y;email@example.com;;
 1000-400;11;aa-bb-01-cc;Balrog;22122;Gimlee;555
 1000-400;20;BRS34002;00002;USPS;PRIO
