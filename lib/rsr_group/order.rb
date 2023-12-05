@@ -98,8 +98,7 @@ module RsrGroup
         io = StringIO.new(to_txt)
         begin
           ftp.storlines("STOR " + filename, io)
-          success = ftp.nlst.include?(filename)
-          @response = ResponseStruct.new(success, nil, modified: ftp.mtime(filename), size: ftp.size(filename))
+          @response = ResponseStruct.new(true)
         ensure
           io.close
         end
