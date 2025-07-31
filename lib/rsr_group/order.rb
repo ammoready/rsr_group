@@ -72,7 +72,7 @@ module RsrGroup
     end
 
     def filename
-      name = ["EORD", @merchant_number, @timestamp, @sequence_number].join("-")
+      name = ["EERR", @merchant_number, @timestamp, @sequence_number].join("-")
       [name, ".txt"].join
     end
 
