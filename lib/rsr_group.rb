@@ -46,7 +46,8 @@ module RsrGroup
 
     def initialize
       @debug_mode     ||= false
-      @ftp_host       ||= "ftps.rsrgroup.com"
+      # @ftp_host       ||= "ftps.rsrgroup.com"
+      @ftp_host       ||= "ftp.rsrgroup.com"
       @ftp_port       ||= "2222"
       @submission_dir ||= File.join("eo", "incoming")
       @response_dir   ||= File.join("eo", "outgoing")
